@@ -21,9 +21,12 @@ keywords:
   - interaction-boundary
   - ensemble-trifecta
   - MESA
-# identifiers:  # TODO — add software DOI after Zenodo–GitHub release archive
+# Software DOI: pending Zenodo-GitHub enable — do not invent or reuse the paper DOI.
+# After Zenodo archives a tagged release, uncomment and fill:
+# identifiers:
 #   - type: doi
-#     value: "10.5281/zenodo.XXXXXXXX"  # do not invent
+#     value: "10.5281/zenodo.<software-version-doi>"  # minted by Zenodo; never invent
+# Paper DOI stays under preferred-citation only (scholarly work ≠ software deposit).
 preferred-citation:
   type: article
   title: "When the Package Cache Becomes a War Room: MESA Against Agentic Swarms"

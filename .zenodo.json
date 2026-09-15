@@ -1,0 +1,39 @@
+{
+  "upload_type": "software",
+  "title": "mesa-ibi-scanner",
+  "description": "<p><strong>Research prototype</strong> that evaluates <strong>MESA Invariant 1</strong> (directed inbound trifecta closure Cl(b)) over a typed agent/service interaction graph, with PDP cut semantics, topology JSON ingestion, and CI-friendly text/JSON/SARIF output.</p><p>Not for production policy enforcement. Companion ACM and topology JSON Schemas included. Companion paper: <a href=\"https://doi.org/10.5281/zenodo.22744547\">10.5281/zenodo.22744547</a>.</p>",
+  "creators": [
+    {
+      "name": "Kumar, Uddeshya",
+      "affiliation": "Independent Researcher"
+    }
+  ],
+  "keywords": [
+    "MESA",
+    "agentic-security",
+    "multi-agent",
+    "least-agency",
+    "interaction-boundary",
+    "ensemble-trifecta",
+    "INV-01",
+    "PDP cut"
+  ],
+  "license": "apache-2.0",
+  "access_right": "open",
+  "language": "eng",
+  "version": "0.3.0",
+  "related_identifiers": [
+    {
+      "identifier": "10.5281/zenodo.22744547",
+      "relation": "isSupplementTo",
+      "resource_type": "publication-article",
+      "scheme": "doi"
+    },
+    {
+      "identifier": "https://github.com/uddeshya-world/mesa-ibi-scanner",
+      "relation": "isIdenticalTo",
+      "resource_type": "software",
+      "scheme": "url"
+    }
+  ]
+}
