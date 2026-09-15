@@ -1,0 +1,42 @@
+{
+  "acm_version": "0.1.0",
+  "agent_id": "agent:prod:deployer:99",
+  "display_name": "Deployer (example — must be denied)",
+  "owner": {
+    "team": "platform",
+    "principal": "platform-oncall@example.com",
+    "environment": "prod"
+  },
+  "tools": [
+    {
+      "name": "ci.trigger_deploy",
+      "side_effect_class": "write-durable"
+    },
+    {
+      "name": "iam.mint_workload_token",
+      "side_effect_class": "identity-mint"
+    },
+    {
+      "name": "swarm.recruit",
+      "side_effect_class": "cross-agent-recruit"
+    }
+  ],
+  "max_side_effect_class": "cross-agent-recruit",
+  "trifecta": {
+    "private_data": true,
+    "untrusted_content": true,
+    "external_communication": true
+  },
+  "peer_comm": {
+    "allowed": true,
+    "may_recruit_peers": true,
+    "channels_allowlist": ["blackboard:artifactory-like"]
+  },
+  "memory": {
+    "persistence": "durable"
+  },
+  "signed": {
+    "status": "unsigned"
+  },
+  "policy_notes": "MESA-ACM-02 example: unsigned + full trifecta flags => deny deploy. Peer channels do not authorize (MESA-ACA-01)."
+}

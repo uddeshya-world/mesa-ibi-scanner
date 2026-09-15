@@ -1,0 +1,31 @@
+cff-version: 1.2.0
+title: "mesa-ibi-scanner"
+message: "If you use this software, please cite it and the companion MESA paper."
+type: software
+authors:
+  - family-names: Kumar
+    given-names: Uddeshya
+version: 0.1.0
+date-released: "2026-09-15"
+license: Apache-2.0
+repository-code: "https://github.com/PLACEHOLDER/mesa-ibi-scanner"
+abstract: >-
+  Research prototype that evaluates MESA Invariant 1 (directed inbound trifecta
+  closure Cl(b)) over a typed agent/service interaction graph. Not for production
+  policy enforcement. Companion ACM JSON Schema included.
+keywords:
+  - agentic-security
+  - multi-agent
+  - least-agency
+  - interaction-boundary
+  - ensemble-trifecta
+  - MESA
+preferred-citation:
+  type: article
+  title: "When the Package Cache Becomes a War Room: MESA Against Agentic Swarms"
+  authors:
+    - family-names: Kumar
+      given-names: Uddeshya
+  year: 2026
+  doi: "10.5281/zenodo.22744547"
+  url: "https://doi.org/10.5281/zenodo.22744547"

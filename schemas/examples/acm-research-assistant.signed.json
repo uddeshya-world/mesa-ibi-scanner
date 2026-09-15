@@ -1,0 +1,54 @@
+{
+  "acm_version": "0.1.0",
+  "agent_id": "agent:prod:research-assistant:01",
+  "display_name": "Research Assistant",
+  "owner": {
+    "team": "knowledge-eng",
+    "principal": "owner@example.com",
+    "environment": "prod"
+  },
+  "identity": {
+    "spiffe_id": "spiffe://example.org/ns/agents/sa/research-assistant"
+  },
+  "tools": [
+    {
+      "name": "docs.search",
+      "mcp_server": "mcp://docs",
+      "side_effect_class": "read"
+    },
+    {
+      "name": "ticket.comment",
+      "mcp_server": "mcp://jira",
+      "side_effect_class": "write-ephemeral"
+    }
+  ],
+  "max_side_effect_class": "write-ephemeral",
+  "trifecta": {
+    "private_data": true,
+    "untrusted_content": true,
+    "external_communication": false
+  },
+  "peer_comm": {
+    "allowed": false,
+    "may_recruit_peers": false,
+    "channels_allowlist": []
+  },
+  "memory": {
+    "persistence": "session",
+    "stores_allowlist": ["redis://agent-session"]
+  },
+  "budgets": {
+    "max_tool_calls_per_hour": 200,
+    "forced_stop_on_saturation": true
+  },
+  "signed": {
+    "status": "signed",
+    "alg": "ed25519",
+    "kid": "acm-root-1",
+    "signature_b64": "REDACTED_EXAMPLE_NOT_A_REAL_SIGNATURE",
+    "signed_at": "2026-09-14T08:00:00Z",
+    "expires_at": "2026-12-14T08:00:00Z",
+    "issuer": "acm-signing.example.org"
+  },
+  "policy_notes": "Example only. external_communication=false; ensemble closure may still become (1,1,1) via IBI-typed edges."
+}
