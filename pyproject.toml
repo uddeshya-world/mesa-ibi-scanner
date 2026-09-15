@@ -39,9 +39,9 @@ dev = ["pytest>=7.0"]
 mesa-ibi-scan = "mesa_ibi_scanner.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/OWNER/mesa-ibi-scanner"
+Homepage = "https://github.com/uddeshya-world/mesa-ibi-scanner"
 Documentation = "https://doi.org/10.5281/zenodo.22744547"
-"Bug Tracker" = "https://github.com/OWNER/mesa-ibi-scanner/issues"
+"Bug Tracker" = "https://github.com/uddeshya-world/mesa-ibi-scanner/issues"
 DOI = "https://doi.org/10.5281/zenodo.22744547"
 
 [tool.setuptools.packages.find]

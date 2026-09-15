@@ -19,7 +19,7 @@ Paper: https://doi.org/10.5281/zenodo.22744547
 ## Install
 
 ```bash
-git clone https://github.com/OWNER/mesa-ibi-scanner.git
+git clone https://github.com/uddeshya-world/mesa-ibi-scanner.git
 cd mesa-ibi-scanner
 python3 -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"
