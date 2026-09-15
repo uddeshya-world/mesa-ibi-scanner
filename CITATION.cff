@@ -29,10 +29,11 @@ keywords:
 # Paper DOI stays under preferred-citation only (scholarly work ≠ software deposit).
 preferred-citation:
   type: article
-  title: "When the Package Cache Becomes a War Room: MESA Against Agentic Swarms"
+  title: "Composition and Emergence on Shared Surfaces: Ensemble Trifecta Closure"
   authors:
     - family-names: Kumar
       given-names: Uddeshya
   year: 2026
-  doi: "10.5281/zenodo.22744547"
-  url: "https://doi.org/10.5281/zenodo.22744547"
+  doi: "10.5281/zenodo.22761743"
+  url: "https://doi.org/10.5281/zenodo.22761743"
+  notes: "Version DOI for this release. Concept DOI (stable cite): 10.5281/zenodo.22743175"

@@ -4,7 +4,7 @@
 
 | Artifact | Role | Identifier |
 |---|---|---|
-| MESA paper | Primary scholarly work | DOI [10.5281/zenodo.22744547](https://doi.org/10.5281/zenodo.22744547) |
+| MESA paper | Primary scholarly work | Version DOI [10.5281/zenodo.22761743](https://doi.org/10.5281/zenodo.22761743); concept [10.5281/zenodo.22743175](https://doi.org/10.5281/zenodo.22743175) |
 | mesa-ibi-scanner | Reference implementation of MESA-INV-01 | This repository (`v0.3.0`); **software DOI: pending Zenodo-GitHub enable** |
 
 ### Cross-link language (DataCite / Zenodo)
@@ -12,7 +12,7 @@
 | From | Relation | To |
 |---|---|---|
 | Paper | **isSupplementedBy** | Scanner (GitHub URL today; **software DOI** once minted) |
-| Scanner | **isSupplementTo** | Paper DOI `10.5281/zenodo.22744547` (see `.zenodo.json`) |
+| Scanner | **isSupplementTo** | Paper version DOI `10.5281/zenodo.22761743` (concept `10.5281/zenodo.22743175`; see `.zenodo.json`) |
 
 When citing:
 

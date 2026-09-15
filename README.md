@@ -3,14 +3,15 @@
 [![CI](https://github.com/uddeshya-world/mesa-ibi-scanner/actions/workflows/ci.yml/badge.svg)](https://github.com/uddeshya-world/mesa-ibi-scanner/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![Status](https://img.shields.io/badge/status-research%20prototype-orange)](#disclaimer)
-[![Paper DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22744547.svg)](https://doi.org/10.5281/zenodo.22744547)
+[![Paper DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22743175.svg)](https://doi.org/10.5281/zenodo.22743175)
 [![Software DOI](https://img.shields.io/badge/Software%20DOI-pending%20Zenodo--GitHub%20enable-lightgrey)](#software-doi-pending--do-not-invent)
 
 **Research prototype** that evaluates **MESA Invariant 1** — directed inbound trifecta closure \(\mathrm{Cl}(b)\) — over a typed agent/service interaction graph, with **PDP cut semantics**.
 
 > **Disclaimer:** Not production policy enforcement. No exploit recipes. Toy fixtures are *shaped like* public Hugging Face Artifactory / DseWiki *composition lessons* for unit tests only.
 
-**Paper DOI** (scholarly work only): https://doi.org/10.5281/zenodo.22744547  
+**Paper DOI** (concept / stable cite): https://doi.org/10.5281/zenodo.22743175  
+**Paper version DOI** (this release): https://doi.org/10.5281/zenodo.22761743  
 **Software DOI:** pending Zenodo-GitHub enable (do not invent; not minted yet)  
 Release: **v0.3.0** (toolization — topology `--input`, CI formats, exit codes)
 
@@ -83,7 +84,7 @@ These masks are **not** a measured false-positive model. They replace the old ha
 
 See [`RELATED.md`](RELATED.md). Summary:
 
-- **Paper** (`10.5281/zenodo.22744547`) **isSupplementedBy** this scanner (reference implementation).
+- **Paper** (version `10.5281/zenodo.22761743`; concept `10.5281/zenodo.22743175`) **isSupplementedBy** this scanner (reference implementation).
 - **Scanner** **isSupplementTo** the paper (see `.zenodo.json` `related_identifiers`).
 - Once a **software DOI** is minted, point the paper’s related-works link at that DOI (not the paper DOI reused as software).
 
@@ -98,7 +99,7 @@ Exact enablement steps (webhook + tagged release): [Zenodo — Enable a reposito
 1. Sign in at [zenodo.org](https://zenodo.org) with the GitHub account that owns `uddeshya-world/mesa-ibi-scanner`.
 2. Zenodo → profile → **GitHub** → **Sync now** → toggle **ON** for this repo (installs the release webhook).
 3. Publish a **new** GitHub Release **after** the toggle (Zenodo does not auto-import past releases such as existing `v0.3.0`).
-4. Copy the software DOI Zenodo mints; update this README badge, `CITATION.cff` `identifiers`, and paper related works. Keep paper DOI `10.5281/zenodo.22744547` as `preferred-citation`.
+4. Copy the software DOI Zenodo mints; update this README badge, `CITATION.cff` `identifiers`, and paper related works. Keep paper version DOI `10.5281/zenodo.22761743` as `preferred-citation` (concept `10.5281/zenodo.22743175`).
 
 ## What it does *not* do
 
