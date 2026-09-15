@@ -1,0 +1,39 @@
+{
+  "topology_version": "0.1.0",
+  "vertices": [
+    {
+      "id": "agent:eval-worker",
+      "kind": "agent",
+      "w": [1, 0, 0],
+      "tags": ["acm"]
+    },
+    {
+      "id": "svc:artifact-registry",
+      "kind": "service",
+      "w": [0, 1, 1],
+      "tags": ["blackboard-capable", "proxy-capable"]
+    },
+    {
+      "id": "svc:slack-notify",
+      "kind": "service",
+      "w": [0, 0, 0],
+      "tags": ["notification"]
+    }
+  ],
+  "edges": [
+    {
+      "src": "svc:artifact-registry",
+      "dst": "agent:eval-worker",
+      "flow_type": "write",
+      "pdp_gate": false,
+      "label": "registry-blackboard-inbound"
+    },
+    {
+      "src": "svc:slack-notify",
+      "dst": "agent:eval-worker",
+      "flow_type": "read",
+      "pdp_gate": false,
+      "label": "zero-weight-notify"
+    }
+  ]
+}

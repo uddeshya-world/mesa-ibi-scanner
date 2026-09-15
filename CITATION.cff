@@ -5,14 +5,15 @@ type: software
 authors:
   - family-names: Kumar
     given-names: Uddeshya
-version: 0.2.0
+version: 0.3.0
 date-released: "2026-09-15"
 license: Apache-2.0
 repository-code: "https://github.com/uddeshya-world/mesa-ibi-scanner"
 abstract: >-
   Research prototype that evaluates MESA Invariant 1 (directed inbound trifecta
-  closure Cl(b)) over a typed agent/service interaction graph. Not for production
-  policy enforcement. Companion ACM JSON Schema included.
+  closure Cl(b)) over a typed agent/service interaction graph, with topology JSON
+  ingestion and CI-friendly text/JSON/SARIF output. Not for production policy
+  enforcement. Companion ACM and topology JSON Schemas included.
 keywords:
   - agentic-security
   - multi-agent
@@ -20,6 +21,9 @@ keywords:
   - interaction-boundary
   - ensemble-trifecta
   - MESA
+# identifiers:  # TODO — add software DOI after Zenodo–GitHub release archive
+#   - type: doi
+#     value: "10.5281/zenodo.XXXXXXXX"  # do not invent
 preferred-citation:
   type: article
   title: "When the Package Cache Becomes a War Room: MESA Against Agentic Swarms"

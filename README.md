@@ -1,5 +1,6 @@
 # mesa-ibi-scanner
 
+[![CI](https://github.com/uddeshya-world/mesa-ibi-scanner/actions/workflows/ci.yml/badge.svg)](https://github.com/uddeshya-world/mesa-ibi-scanner/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![Status](https://img.shields.io/badge/status-research%20prototype-orange)](#disclaimer)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22744547.svg)](https://doi.org/10.5281/zenodo.22744547)
@@ -8,7 +9,8 @@
 
 > **Disclaimer:** Not production policy enforcement. No exploit recipes. Toy fixtures are *shaped like* public Hugging Face Artifactory / DseWiki *composition lessons* for unit tests only.
 
-Paper: https://doi.org/10.5281/zenodo.22744547
+Paper: https://doi.org/10.5281/zenodo.22744547  
+Release: **v0.3.0** (toolization — topology `--input`, CI formats, exit codes)
 
 ## Invariant 1 (cut semantics)
 
@@ -28,11 +30,29 @@ pip install -e ".[dev]"
 ## Quick start
 
 ```bash
+# Built-in fixtures
 mesa-ibi-scan --fixture hf_like
 mesa-ibi-scan --fixture multihop_gated
-mesa-ibi-scan --fixture multihop_open --json
+mesa-ibi-scan --fixture multihop_open --format json
+
+# Topology file (schema-validated)
+mesa-ibi-scan --input schemas/examples/topology-hf-like.json --format text
+
+# CI-friendly: non-zero exit on violation + SARIF
+mesa-ibi-scan --input schemas/examples/topology-hf-like.json --format sarif --exit-code
+
 pytest -q
 ```
+
+### CLI flags (v0.3)
+
+| Flag | Meaning |
+|---|---|
+| `--fixture NAME` | Built-in toy graph (default `hf_like` if neither fixture nor input) |
+| `--input PATH` | Load / validate estate topology JSON |
+| `--format text\|json\|sarif` | Output format (minimal SARIF 2.1.0 for violations) |
+| `--exit-code` | Exit `1` if any INV-01 violation; schema/load errors → `2` |
+| `--severity error\|warning\|note` | **Stub / deferred** — accepted for forward-compat; all violations are `error` today; no filtering yet |
 
 ## Flow-type masks (illustrative / uncalibrated)
 
@@ -50,11 +70,28 @@ These masks are **not** a measured false-positive model. They replace the old ha
 
 `(private_data, untrusted_content, external_communication)` ∈ `{0,1}³`
 
-## Companion schema
+## Companion schemas
 
-- Versioned: [`schemas/v0.1/mesa-acm.schema.json`](schemas/v0.1/mesa-acm.schema.json)
-- `$id`: `https://raw.githubusercontent.com/uddeshya-world/mesa-ibi-scanner/v0.2.0/schemas/v0.1/mesa-acm.schema.json`
-- Examples under `schemas/examples/`
+- ACM (versioned): [`schemas/v0.1/mesa-acm.schema.json`](schemas/v0.1/mesa-acm.schema.json)
+- Topology (v0.3): [`schemas/v0.1/mesa-topology.schema.json`](schemas/v0.1/mesa-topology.schema.json)
+  - `$id`: `https://raw.githubusercontent.com/uddeshya-world/mesa-ibi-scanner/v0.3.0/schemas/v0.1/mesa-topology.schema.json`
+- Example topology: [`schemas/examples/topology-hf-like.json`](schemas/examples/topology-hf-like.json) (matches `hf_like` fixture)
+
+## Related works (paper ↔ scanner)
+
+See [`RELATED.md`](RELATED.md). Summary:
+
+- Paper DOI **isSupplementedBy** this scanner (reference implementation).
+- Scanner **isSupplementTo** the paper; once a **software DOI** exists, reverse the DataCite relation in Zenodo metadata.
+
+### Software DOI (TODO — do not invent)
+
+A dedicated **software** Zenodo DOI for this repository is **not minted from CI/CLI yet**. To obtain one:
+
+1. Sign in at [zenodo.org](https://zenodo.org) with the GitHub account that owns `uddeshya-world/mesa-ibi-scanner`.
+2. Enable **GitHub** under Zenodo → GitHub integrations; flip the switch for this repo.
+3. Create a GitHub Release (e.g. `v0.3.0`); Zenodo archives the tag and issues a DOI.
+4. Update `CITATION.cff` / README badge with that software DOI; keep the paper DOI (`10.5281/zenodo.22744547`) as `preferred-citation`.
 
 ## What it does *not* do
 
