@@ -4,17 +4,17 @@
 [![Status](https://img.shields.io/badge/status-research%20prototype-orange)](#disclaimer)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22744547.svg)](https://doi.org/10.5281/zenodo.22744547)
 
-**Research prototype** that evaluates **MESA Invariant 1** — directed inbound trifecta closure \(\mathrm{Cl}(b)\) — over a typed agent/service interaction graph.
-
-MESA plugs into frameworks CISOs already run. Public surface: **MESA-IBI**, **MESA-ACM**, **MESA-ACA**, and **Invariant 1**. This repo ships the **scanner sketch + ACM JSON Schema**.
+**Research prototype** that evaluates **MESA Invariant 1** — directed inbound trifecta closure \(\mathrm{Cl}(b)\) — over a typed agent/service interaction graph, with **PDP cut semantics**.
 
 > **Disclaimer:** Not production policy enforcement. No exploit recipes. Toy fixtures are *shaped like* public Hugging Face Artifactory / DseWiki *composition lessons* for unit tests only.
 
-## Why it exists
-
-Per-agent checks (Rule of Two / lethal trifecta) can all pass while a **group** of agents plus a shared interaction surface still compose \((1,1,1)\). This tool computes inbound closure and flags agents where \(\mathrm{Cl}(b)=(1,1,1)\) without a PDP gate on contributing paths (`MESA-INV-01`).
-
 Paper: https://doi.org/10.5281/zenodo.22744547
+
+## Invariant 1 (cut semantics)
+
+For every agent \(b\), let \(\mathrm{Cl}(b)\) be the join of property vectors over vertices with a directed path into \(b\), **masked by edge flow type**. PDP-gated edges are **removed**; the gated set must form a **cut** such that closure over the **residual** graph is not \((1,1,1)\).
+
+Complexity: \(O(|V|\cdot|E|)\) reachability fixpoint (not \(2^{|V|}\)).
 
 ## Install
 
@@ -29,34 +29,39 @@ pip install -e ".[dev]"
 
 ```bash
 mesa-ibi-scan --fixture hf_like
-mesa-ibi-scan --fixture dsewiki_like --json
+mesa-ibi-scan --fixture multihop_gated
+mesa-ibi-scan --fixture multihop_open --json
 pytest -q
 ```
 
+## Flow-type masks (illustrative / uncalibrated)
+
+| `flow_type` | Mask `(P,U,E)` | Rationale (prototype) |
+|---|---|---|
+| `write` | `(1,1,1)` | Full state transfer |
+| `goal-message` | `(0,1,0)` | Conveys untrusted content / intent, not data or egress |
+| `proxy/egress` | `(0,0,1)` | Conveys reachability / egress capability only |
+| `identity-mint` | `(1,0,1)` | Credential / identity capability |
+| `read` | `(1,1,0)` | Data + content, not egress capability |
+
+These masks are **not** a measured false-positive model. They replace the old hand-tuned `Vertex.contributes` flag.
+
 ## Property vector
 
-`(private_data, untrusted_content, external_communication)` ∈ `{0,1}³`  
-Join is bitwise OR along directed paths **into** agent `b` (including typed services on those paths).
+`(private_data, untrusted_content, external_communication)` ∈ `{0,1}³`
 
 ## Companion schema
 
-- `schemas/mesa-acm.schema.json` — Agency Capability Manifest (ACM)
-- `schemas/examples/` — signed-admit / unsigned-deny style examples
+- Versioned: [`schemas/v0.1/mesa-acm.schema.json`](schemas/v0.1/mesa-acm.schema.json)
+- `$id`: `https://raw.githubusercontent.com/uddeshya-world/mesa-ibi-scanner/v0.2.0/schemas/v0.1/mesa-acm.schema.json`
+- Examples under `schemas/examples/`
 
 ## What it does *not* do
 
 - Live estate scanning or weaponized Schelling-point discovery
-- Measured false-positive rates (flow typing is illustrative)
+- Measured false-positive rates
 - Replace your PDP / mesh / ACM admission path
-
-## Cite
-
-See [`CITATION.cff`](CITATION.cff). Prefer the Zenodo DOI for the paper.
 
 ## License
 
 Apache License 2.0 — see [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE).
-
-## Topics (GitHub)
-
-`agentic-ai` `cybersecurity` `multi-agent` `zero-trust` `policy-as-code` `research`
