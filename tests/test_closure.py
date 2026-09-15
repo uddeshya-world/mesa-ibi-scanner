@@ -68,3 +68,17 @@ def test_same_graph_ungated_is_violation():
 def test_all_paths_have_pdp_removed():
     import mesa_ibi_scanner.graph as graph_mod
     assert not hasattr(graph_mod, "_all_paths_have_pdp")
+
+
+def test_off_inventory_vacuous_green_is_not_g_complete():
+    """Incomplete IBI: residual green must not be read as certifying G.
+
+    Fixture omits Schelling sibling; expect no INV-01 violation on inventoried G.
+    Documented hazard: F-E5 / off-inventory blackboard outside G.
+    """
+    from mesa_ibi_scanner.fixtures import fixture_off_inventory_vacuous
+    g = fixture_off_inventory_vacuous()
+    results = evaluate_invariant(g)
+    assert all(r.violation is False for r in results)
+    # Explicit: approved-docs alone cannot close trifecta; green ≠ G-complete
+    assert "svc:zzz-sibling" not in g.vertices

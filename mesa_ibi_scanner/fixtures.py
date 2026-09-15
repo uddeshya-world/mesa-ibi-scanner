@@ -123,7 +123,25 @@ def fixture_multihop(*, with_pdp: bool = True) -> EstateGraph:
     return g
 
 
+def fixture_off_inventory_vacuous() -> EstateGraph:
+    """Documents incomplete-IBI hazard (Sim 6 / F-E5 class): Schelling sibling NOT in G.
+
+    Inventoried graph looks residual-clean (no INV-01 violation) while a real
+    off-inventory blackboard could still exist. This fixture encodes only the
+    inventoried subset — expected evaluate_invariant: no violation — and tests
+    must assert that incompleteness, not treat green as certification of G.
+    """
+    g = EstateGraph()
+    g.add_vertex(Vertex("agent:sandbox", VertexKind.AGENT, w=(1, 0, 0), tags={"acm"}))
+    # Deliberately omit svc:zzz-sibling / public Schelling from G
+    g.add_vertex(Vertex("svc:approved-docs", VertexKind.SERVICE, w=(0, 0, 0), tags={"read-only"}))
+    g.add_edge(Edge("svc:approved-docs", "agent:sandbox", "read", pdp_gate=False))
+    return g
+
+
 FIXTURES = {
+    "off_inventory_vacuous": fixture_off_inventory_vacuous,
+
     "hf_like": lambda: fixture_hf_like(with_pdp=False),
     "hf_like_gated": lambda: fixture_hf_like(with_pdp=True),
     "dsewiki_like": lambda: fixture_dsewiki_like(with_pdp=False),

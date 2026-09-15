@@ -1,3 +1,8 @@
+## 0.3.1 — 2026-09-15
+
+- `off_inventory_vacuous` fixture + test documenting incomplete-IBI vacuous-green hazard (Sim 6 / F-E5 class).
+- JSON output adds `residual_cut_ok` (alias of legacy `pdp_on_all_contributing_paths`).
+
 # Changelog
 
 ## 0.3.0 — 2026-09-15
