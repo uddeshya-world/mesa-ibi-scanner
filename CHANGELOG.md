@@ -1,3 +1,14 @@
+## 0.3.2 — 2026-09-16
+
+### Performance
+- Hoist `inbound_adjacency()` once per `evaluate_invariant`; compute contributors lazily only for violating agents (~5× faster at V=4000).
+
+### Correctness / packaging
+- Align `CITATION.cff` + `.zenodo.json` with package version (CI version-consistency check).
+- README: GitHub `$...$` math; complexity claim scoped to closure + lazy BFS.
+- Topology schema/loader: `pdp_gate` optional, default `false`.
+- Property fuzz tests (monotonicity, gating soundness, all-gated, determinism) + 2k-vertex perf budget.
+
 ## 0.3.1 — 2026-09-15
 
 - `off_inventory_vacuous` fixture + test documenting incomplete-IBI vacuous-green hazard (Sim 6 / F-E5 class).

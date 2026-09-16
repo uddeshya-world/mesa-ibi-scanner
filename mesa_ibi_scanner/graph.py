@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Dict, List, Set, Tuple
+from typing import Dict, List, Optional, Set, Tuple
 
 PropertyVector = Tuple[int, int, int]  # (private_data, untrusted_content, external_communication)
 
@@ -98,7 +98,7 @@ def compute_inbound_closure(g: EstateGraph) -> Dict[str, PropertyVector]:
     """Reachability fixpoint with per-edge flow-type masks.
 
     Cl(b) joins masked upstream closures along inbound edges.
-    Complexity: O(|V| · |E|) iterative propagation.
+    Complexity: O(|V| · |E|) iterative propagation (this function only).
     """
     cl: Dict[str, PropertyVector] = {vid: v.w for vid, v in g.vertices.items()}
     inbound = g.inbound_adjacency()
@@ -118,9 +118,14 @@ def compute_inbound_closure(g: EstateGraph) -> Dict[str, PropertyVector]:
     return cl
 
 
-def _contributors_for_agent(g: EstateGraph, agent_id: str) -> Set[str]:
-    """Vertices that reach agent_id (including itself), via reverse BFS on residual edges."""
-    inbound = g.inbound_adjacency()
+def _contributors_for_agent(
+    agent_id: str,
+    inbound: Dict[str, List[Edge]],
+) -> Set[str]:
+    """Vertices that reach agent_id (including itself), via reverse BFS.
+
+    Callers must pass a precomputed inbound adjacency (hoisted once per evaluate).
+    """
     seen: Set[str] = set()
     stack = [agent_id]
     while stack:
@@ -135,13 +140,18 @@ def _contributors_for_agent(g: EstateGraph, agent_id: str) -> Set[str]:
 
 
 def evaluate_invariant(g: EstateGraph) -> List[ClosureResult]:
-    """Cut semantics: gated edges removed; violation iff residual Cl is FULL."""
+    """Cut semantics: gated edges removed; violation iff residual Cl is FULL.
+
+    Complexity: O(|V|·|E|) for the two closures, plus O(|V|+|E|) BFS only for
+    agents that violate (lazy contributors).
+    """
     residual = EstateGraph(
         vertices=dict(g.vertices),
         edges=[e for e in g.edges if not e.pdp_gate],
     )
     cl_residual = compute_inbound_closure(residual)
     cl_full = compute_inbound_closure(g)
+    inbound_residual = residual.inbound_adjacency()  # hoist once
     results: List[ClosureResult] = []
     for vid, v in g.vertices.items():
         if v.kind != VertexKind.AGENT:
@@ -149,14 +159,18 @@ def evaluate_invariant(g: EstateGraph) -> List[ClosureResult]:
         cl = cl_full[vid]
         residual_cl = cl_residual[vid]
         full = cl == FULL
+        violation = residual_cl == FULL
+        contrib = (
+            _contributors_for_agent(vid, inbound_residual) if violation else set()
+        )
         results.append(
             ClosureResult(
                 agent_id=vid,
                 cl=cl,
                 full_trifecta=full,
                 pdp_on_all_contributing_paths=residual_cl != FULL,
-                violation=residual_cl == FULL,
-                contributing_vertex_ids=_contributors_for_agent(residual, vid),
+                violation=violation,
+                contributing_vertex_ids=contrib,
             )
         )
     return results

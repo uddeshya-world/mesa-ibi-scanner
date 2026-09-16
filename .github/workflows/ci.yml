@@ -23,6 +23,19 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -e ".[dev]"
+      - name: Version consistency
+        run: |
+          python - <<'PY'
+          import json, re, pathlib, sys
+          root = pathlib.Path(".")
+          pp = re.search(r'version\s*=\s*"([^"]+)"', (root/"pyproject.toml").read_text()).group(1)
+          init = re.search(r'__version__\s*=\s*"([^"]+)"', (root/"mesa_ibi_scanner/__init__.py").read_text()).group(1)
+          cff = re.search(r'^version:\s*(\S+)', (root/"CITATION.cff").read_text(), re.M).group(1)
+          zj = json.loads((root/".zenodo.json").read_text())["version"]
+          print(f"pyproject={pp} init={init} cff={cff} zenodo={zj}")
+          if len({pp, init, cff, zj}) != 1:
+              sys.exit("version drift across pyproject.toml / __init__ / CITATION.cff / .zenodo.json")
+          PY
       - name: Run tests
         run: pytest -q
       - name: CLI smoke (fixture + topology + sarif)

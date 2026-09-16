@@ -6,7 +6,7 @@
 [![Paper DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22743175.svg)](https://doi.org/10.5281/zenodo.22743175)
 [![Software DOI](https://img.shields.io/badge/Software%20DOI-pending%20Zenodo--GitHub%20enable-lightgrey)](#software-doi-pending--do-not-invent)
 
-**Research prototype** that evaluates **MESA Invariant 1** — directed inbound trifecta closure \(\mathrm{Cl}(b)\) — over a typed agent/service interaction graph, with **PDP cut semantics**.
+**Research prototype** that evaluates **MESA Invariant 1** — directed inbound trifecta closure $\mathrm{Cl}(b)$ — over a typed agent/service interaction graph, with **PDP cut semantics**.
 
 > **Disclaimer:** Not production policy enforcement. No exploit recipes. Toy fixtures are *shaped like* public Hugging Face Artifactory / DseWiki *composition lessons* for unit tests only.
 
@@ -17,9 +17,9 @@ Release: **v0.3.0** (toolization — topology `--input`, CI formats, exit codes)
 
 ## Invariant 1 (cut semantics)
 
-For every agent \(b\), let \(\mathrm{Cl}(b)\) be the join of property vectors over vertices with a directed path into \(b\), **masked by edge flow type**. PDP-gated edges are **removed**; the gated set must form a **cut** such that closure over the **residual** graph is not \((1,1,1)\).
+For every agent $b$, let $\mathrm{Cl}(b)$ be the join of property vectors over vertices with a directed path into $b$, **masked by edge flow type**. PDP-gated edges are **removed**; the gated set must form a **cut** such that closure over the **residual** graph is not $(1,1,1)$.
 
-Complexity: \(O(|V|\cdot|E|)\) reachability fixpoint (not \(2^{|V|}\)).
+Complexity: `evaluate_invariant` is $O(|V|\cdot|E|)$ for the two closure fixpoints (not $2^{|V|}$), plus a reverse BFS only for agents that violate. `compute_inbound_closure` alone is $O(|V|\cdot|E|)$.
 
 ## Install
 

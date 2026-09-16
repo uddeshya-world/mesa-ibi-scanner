@@ -92,7 +92,7 @@ def document_to_graph(doc: Dict[str, Any]) -> EstateGraph:
                 src=src,
                 dst=dst,
                 flow_type=raw["flow_type"],
-                pdp_gate=bool(raw["pdp_gate"]),
+                pdp_gate=bool(raw.get("pdp_gate", False)),
                 label=str(raw.get("label") or ""),
             )
         )
