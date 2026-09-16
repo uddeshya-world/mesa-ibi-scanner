@@ -41,5 +41,10 @@ jobs:
       - name: CLI smoke (fixture + topology + sarif)
         run: |
           mesa-ibi-scan --fixture hf_like --format text
-          mesa-ibi-scan --input schemas/examples/topology-hf-like.json --format json --exit-code; test $? -eq 1
+          # --exit-code returns 1 on violation; must not trip bash -e
+          set +e
+          mesa-ibi-scan --input schemas/examples/topology-hf-like.json --format json --exit-code
+          ec=$?
+          set -e
+          test "$ec" -eq 1
           mesa-ibi-scan --fixture hf_like_gated --format sarif --exit-code
