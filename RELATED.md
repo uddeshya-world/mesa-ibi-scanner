@@ -5,7 +5,7 @@
 | Artifact | Role | Identifier |
 |---|---|---|
 | MESA paper | Primary scholarly work (self-published preprint, not peer-reviewed) | Cite concept DOI [10.5281/zenodo.22743175](https://doi.org/10.5281/zenodo.22743175), which resolves to the latest version, currently [10.5281/zenodo.22761743](https://doi.org/10.5281/zenodo.22761743). Zenodo resource type `publication-preprint`. |
-| mesa-ibi-scanner | Reference implementation of MESA-INV-01 | This repository (`v0.3.0`); **software DOI: pending Zenodo-GitHub enable** |
+| mesa-ibi-scanner | Reference implementation of MESA-INV-01 | This repository (`v0.3.2`); **software DOI: pending Zenodo-GitHub enable** |
 
 ### Cross-link language (DataCite / Zenodo)
 

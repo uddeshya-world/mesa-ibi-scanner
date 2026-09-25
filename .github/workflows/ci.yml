@@ -93,11 +93,12 @@ jobs:
       - name: T1 unit
         run: make t1
 
-  # Pull-request protected-path enforcement lives in protected-paths.yml
-  # (pull_request_target, base checkout only). This job only runs on a push
-  # to main, where the workflow file is already on the branch being pushed.
-  # It diffs github.event.before...github.sha so the range is not empty.
-  protected-paths:
+  # Pull-request enforcement is the protected-paths job in protected-paths.yml
+  # (pull_request_target, base checkout only). This job is a different name
+  # so a skip on pull requests cannot satisfy that required check. It only
+  # runs on a push to main and diffs github.event.before...github.sha.
+  protected-paths-push-audit:
+    name: protected-paths-push-audit
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:

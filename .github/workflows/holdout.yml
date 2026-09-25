@@ -34,10 +34,8 @@ jobs:
               exit 1
             fi
             sha=$(gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}" --jq .head.sha)
-            echo "candidate_ref=refs/pull/${PR_NUMBER}/head" >> "$GITHUB_OUTPUT"
             echo "head_sha=${sha}" >> "$GITHUB_OUTPUT"
           else
-            echo "candidate_ref=${PUSH_SHA}" >> "$GITHUB_OUTPUT"
             echo "head_sha=${PUSH_SHA}" >> "$GITHUB_OUTPUT"
           fi
 
@@ -53,19 +51,30 @@ jobs:
       - name: Check out candidate
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
-          ref: ${{ steps.refs.outputs.candidate_ref }}
+          ref: ${{ steps.refs.outputs.head_sha }}
           path: candidate
           persist-credentials: false
 
-      - name: Build candidate wheel
+      - name: Build candidate wheel (container, no secrets)
         env:
           GITHUB_TOKEN: ""
           GH_TOKEN: ""
           MESA_HOLDOUT_TOKEN: ""
         run: |
           set -euo pipefail
-          python -m pip install --upgrade pip build
-          python -m build --wheel candidate --outdir "$RUNNER_TEMP/wheels"
+          src="$RUNNER_TEMP/candidate-src"
+          out="$RUNNER_TEMP/wheels"
+          rm -rf "$src" "$out"
+          mkdir -p "$out"
+          cp -a candidate "$src"
+          # Mount only the source copy and the wheel output. No docker socket,
+          # no GITHUB_ENV, no GITHUB_PATH, and no workspace mount.
+          docker run --rm \
+            -v "$src:/src" \
+            -v "$out:/out" \
+            python:3.12-slim@sha256:2f17fc044b579bab302c2e8054d3a686e2cb9a83de48e70534b94cd8ebbe06a9 \
+            sh -c 'pip wheel --no-deps /src -w /out' >/dev/null 2>&1
+          ls "$out"/*.whl >/dev/null
 
       - name: Clone mesa-holdout
         id: clone
@@ -75,7 +84,7 @@ jobs:
           GH_TOKEN: ""
         run: |
           set +e
-          line=$(python3 trusted/.github/harness/holdout.py clone "$RUNNER_TEMP/holdout")
+          line=$(python3 -I trusted/.github/harness/holdout.py clone "$RUNNER_TEMP/holdout")
           code=$?
           set -e
           if [ "$code" -ne 0 ]; then
@@ -101,7 +110,7 @@ jobs:
           cp "$RUNNER_TEMP"/wheels/*.whl "$work/wheels/"
           cp trusted/.github/harness/holdout_in_container.py "$work/driver.py"
           cat > "$work/Dockerfile" <<'EOF'
-          FROM python:3.12-slim
+          FROM python:3.12-slim@sha256:2f17fc044b579bab302c2e8054d3a686e2cb9a83de48e70534b94cd8ebbe06a9
           COPY wheels/ /wheels/
           RUN pip install --no-cache-dir /wheels/*.whl && rm -rf /wheels
           COPY driver.py /opt/mesa-holdout-driver.py
@@ -126,7 +135,7 @@ jobs:
           MESA_HOLDOUT_TOKEN: ""
         run: |
           set +e
-          line=$(python3 trusted/.github/harness/holdout.py compare "$RUNNER_TEMP/holdout" "$RUNNER_TEMP/holdout-outputs")
+          line=$(python3 -I trusted/.github/harness/holdout.py compare "$RUNNER_TEMP/holdout" "$RUNNER_TEMP/holdout-outputs")
           code=$?
           set -euo pipefail
           if [ -z "$line" ]; then
@@ -165,7 +174,7 @@ jobs:
           else
             state="failure"
           fi
-          python3 - "$HEAD_SHA" "$state" "$result" <<'PY'
+          python3 -I - "$HEAD_SHA" "$state" "$result" <<'PY'
           import json, os, sys, urllib.request
           sha, state, result = sys.argv[1], sys.argv[2], sys.argv[3]
           body = json.dumps(

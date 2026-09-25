@@ -10,7 +10,7 @@ The authoritative result is a commit status named `holdout` on the pull request 
 
 `holdout: not configured` fails the job. An empty corpus, a failed clone, a schema or load error, or a result mismatch also fails the job. None of those cases print fixture names, file contents, paths, or diffs. The workflow uploads no artifacts.
 
-Pull-request CI does not run this check and does not receive the token. Its `t3-holdout` job only prints `holdout: runs in holdout.yml (owner-dispatched)` and exits 0. `make t3-holdout` still runs `holdout.py` locally and fails closed when the token is absent.
+Pull-request CI does not run this check and does not receive the token. Its `t3-holdout` job only prints `holdout: runs in holdout.yml (owner-dispatched)` and exits 0. `make t3-holdout` is owner-only, on a reviewed `main` checkout: it imports the working-tree scanner while the token is in the environment, and it fails closed when the token is absent.
 
 ## Who runs it
 
