@@ -42,9 +42,10 @@ mesa-ibi-scan = "mesa_ibi_scanner.cli:main"
 
 [project.urls]
 Homepage = "https://github.com/uddeshya-world/mesa-ibi-scanner"
-Documentation = "https://doi.org/10.5281/zenodo.22744547"
+# Paper concept DOI (stable cite). Not a software DOI; that is minted later.
+Documentation = "https://doi.org/10.5281/zenodo.22743175"
 "Bug Tracker" = "https://github.com/uddeshya-world/mesa-ibi-scanner/issues"
-DOI = "https://doi.org/10.5281/zenodo.22744547"
+DOI = "https://doi.org/10.5281/zenodo.22743175"
 
 [tool.setuptools.packages.find]
 where = ["."]

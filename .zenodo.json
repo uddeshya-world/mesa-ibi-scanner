@@ -1,7 +1,7 @@
 {
   "upload_type": "software",
   "title": "mesa-ibi-scanner",
-  "description": "<p><strong>Research prototype</strong> that evaluates <strong>MESA Invariant 1</strong> (directed inbound trifecta closure Cl(b)) over a typed agent/service interaction graph, with PDP cut semantics, topology JSON ingestion, and CI-friendly text/JSON/SARIF output.</p><p>Not for production policy enforcement. Companion ACM and topology JSON Schemas included. Companion paper: <a href=\"https://doi.org/10.5281/zenodo.22761743\">10.5281/zenodo.22761743</a> (concept <a href=\"https://doi.org/10.5281/zenodo.22743175\">10.5281/zenodo.22743175</a>).</p>",
+  "description": "<p><strong>Research prototype</strong> that evaluates <strong>MESA Invariant 1</strong> (directed inbound trifecta closure Cl(b)) over a typed agent/service interaction graph, with PDP cut semantics, topology JSON ingestion, and CI-friendly text/JSON/SARIF output.</p><p>Not for production policy enforcement. Companion ACM and topology JSON Schemas included. Companion preprint: <a href=\"https://doi.org/10.5281/zenodo.22743175\">10.5281/zenodo.22743175</a> (concept DOI; latest version <a href=\"https://doi.org/10.5281/zenodo.22761743\">10.5281/zenodo.22761743</a>).</p>",
   "creators": [
     {
       "name": "Kumar, Uddeshya",
@@ -26,13 +26,13 @@
     {
       "identifier": "10.5281/zenodo.22743175",
       "relation": "isSupplementTo",
-      "resource_type": "publication-article",
+      "resource_type": "publication-preprint",
       "scheme": "doi"
     },
     {
       "identifier": "10.5281/zenodo.22761743",
       "relation": "isSupplementTo",
-      "resource_type": "publication-article",
+      "resource_type": "publication-preprint",
       "scheme": "doi"
     },
     {
@@ -43,31 +43,31 @@
     },
     {
       "identifier": "https://metr.org/blog/2026-08-26-openai-hugging-face-incident-investigation/",
-      "relation": "references",
-      "resource_type": "publication-other",
+      "relation": "cites",
+      "resource_type": "publication-report",
       "scheme": "url"
     },
     {
       "identifier": "https://www.redwoodresearch.org/research/hugging-face-incident",
-      "relation": "references",
-      "resource_type": "publication-other",
+      "relation": "cites",
+      "resource_type": "publication-report",
       "scheme": "url"
     },
     {
       "identifier": "https://collusion.wiki/",
-      "relation": "references",
-      "resource_type": "publication-other",
+      "relation": "cites",
+      "resource_type": "publication-report",
       "scheme": "url"
     },
     {
       "identifier": "https://www.helpnetsecurity.com/2026/08/03/deepseek-ai-autonomous-cyberattacks-hermes-agent/",
-      "relation": "references",
+      "relation": "cites",
       "resource_type": "publication-other",
       "scheme": "url"
     },
     {
       "identifier": "https://www.developersdigest.tech/blog/openai-hugging-face-incident-report-analysis-2026",
-      "relation": "references",
+      "relation": "cites",
       "resource_type": "publication-other",
       "scheme": "url"
     }

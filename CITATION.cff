@@ -31,9 +31,9 @@ preferred-citation:
     - family-names: Kumar
       given-names: Uddeshya
   year: 2026
-  doi: "10.5281/zenodo.22761743"
-  url: "https://doi.org/10.5281/zenodo.22761743"
-  notes: "Version DOI for this release. Concept DOI (stable cite): 10.5281/zenodo.22743175"
+  doi: "10.5281/zenodo.22743175"
+  url: "https://doi.org/10.5281/zenodo.22743175"
+  notes: "Preprint, not peer-reviewed. Concept DOI (stable cite); resolves to the latest version, currently 10.5281/zenodo.22761743."
 references:
   - type: article
     title: "Composition and Emergence on Shared Surfaces: Ensemble Trifecta Closure"
@@ -43,7 +43,7 @@ references:
     year: 2026
     doi: 10.5281/zenodo.22743175
     url: "https://doi.org/10.5281/zenodo.22743175"
-    notes: "Paper concept DOI (stable cite)."
+    notes: "Paper concept DOI (stable cite). Preprint, not peer-reviewed."
   - type: article
     title: "Composition and Emergence on Shared Surfaces: Ensemble Trifecta Closure"
     authors:
@@ -52,7 +52,7 @@ references:
     year: 2026
     doi: 10.5281/zenodo.22761743
     url: "https://doi.org/10.5281/zenodo.22761743"
-    notes: "Paper version DOI."
+    notes: "Paper version DOI for the current record. Preprint, not peer-reviewed."
   - type: blog
     title: "METR incident investigation: OpenAI / Hugging Face"
     authors:
