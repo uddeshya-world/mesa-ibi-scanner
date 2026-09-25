@@ -26,6 +26,18 @@ REQUIRED_PATTERNS: tuple[str, ...] = (
     "/DECISIONS.md",
     "/.github/",
     "/Makefile",
+    "/pyproject.toml",
+    "**/conftest.py",
+    "/pytest.ini",
+    "/tox.ini",
+    "/setup.cfg",
+    "/ruff.toml",
+    "/.ruff.toml",
+    "/mypy.ini",
+    "/.zenodo.json",
+    "/CITATION.cff",
+    "/docs/VALIDATION.md",
+    "/docs/HOLDOUT.md",
 )
 
 OWNER = "@uddeshya-world"
@@ -146,17 +158,43 @@ def assert_codeowners_contract() -> None:
         ("/DECISIONS.md", "DECISIONS.md"),
         ("/tasks/", "tasks/TASK-0001.md"),
         ("/claims/", "claims/ledger.json"),
+        ("/claims-ledger/", "claims-ledger/item.json"),
         ("/CLAIMS.md", "CLAIMS.md"),
+        ("/pyproject.toml", "pyproject.toml"),
+        ("**/conftest.py", "conftest.py"),
+        ("**/conftest.py", "tests/conftest.py"),
+        ("**/conftest.py", "a/b/conftest.py"),
+        ("/pytest.ini", "pytest.ini"),
+        ("/tox.ini", "tox.ini"),
+        ("/setup.cfg", "setup.cfg"),
+        ("/ruff.toml", "ruff.toml"),
+        ("/.ruff.toml", ".ruff.toml"),
+        ("/mypy.ini", "mypy.ini"),
+        ("/.zenodo.json", ".zenodo.json"),
+        ("/CITATION.cff", "CITATION.cff"),
+        ("/docs/VALIDATION.md", "docs/VALIDATION.md"),
+        ("/docs/HOLDOUT.md", "docs/HOLDOUT.md"),
     )
+    covered = {pattern for pattern, _sample in samples}
+    uncovered = [pattern for pattern in REQUIRED_PATTERNS if pattern not in covered]
+    if uncovered:
+        raise RuntimeError("T0 contract has no sample for: " + ", ".join(uncovered))
     for pattern, sample in samples:
         if not path_matches(pattern, sample):
             raise RuntimeError(f"pattern {pattern} did not match {sample}")
+        if not is_protected(sample):
+            raise RuntimeError(f"{sample} is not protected")
     if path_matches("/Makefile", "docs/Makefile"):
         raise RuntimeError("Makefile pattern matched a nested path")
     if path_matches("/tests/", "mesa_ibi_scanner/graph.py"):
         raise RuntimeError("tests pattern matched scanner source")
-    if is_protected("README.md"):
-        raise RuntimeError("README.md must not be a protected path")
+    if path_matches("/pyproject.toml", "nested/pyproject.toml"):
+        raise RuntimeError("pyproject pattern matched a nested path")
+    if path_matches("/pytest.ini", "docs/pytest.ini"):
+        raise RuntimeError("pytest.ini pattern matched a nested path")
+    if path_matches("/docs/HOLDOUT.md", "docs/other/HOLDOUT.md"):
+        raise RuntimeError("HOLDOUT pattern matched a nested path")
+    # README protection is an owner decision (see DECISIONS.md open items).
     if not is_protected(".github/harness/t0.py"):
         raise RuntimeError("harness scripts must be protected")
 
@@ -181,8 +219,23 @@ def base_ref() -> str:
 
 
 def changed_files() -> list[str]:
-    base = base_ref()
-    out = git("diff", "--name-only", f"{base}...HEAD")
+    """Names added, removed, or modified. Renames are two paths, not one.
+
+    DIFF_BASE and DIFF_HEAD select an explicit range (push uses
+    github.event.before...github.sha). Otherwise the range is the merge-base
+    of the base ref and HEAD.
+    """
+    diff_base = os.environ.get("DIFF_BASE", "").strip()
+    diff_head = os.environ.get("DIFF_HEAD", "").strip()
+    if diff_base or diff_head:
+        if not diff_base or not diff_head:
+            raise RuntimeError("DIFF_BASE and DIFF_HEAD must be set together")
+        if set(diff_base) <= {"0"} or set(diff_head) <= {"0"}:
+            raise RuntimeError("refusing to diff an all-zero commit")
+        out = git("diff", "--no-renames", "--name-only", diff_base, diff_head)
+    else:
+        base = base_ref()
+        out = git("diff", "--no-renames", "--name-only", f"{base}...HEAD")
     return sorted({line for line in out.splitlines() if line})
 
 

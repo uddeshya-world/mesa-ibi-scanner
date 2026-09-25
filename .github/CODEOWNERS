@@ -24,3 +24,17 @@
 /DECISIONS.md @uddeshya-world
 /.github/ @uddeshya-world
 /Makefile @uddeshya-world
+
+# Tooling that can change which tests run, and the citation / harness contract.
+/pyproject.toml @uddeshya-world
+**/conftest.py @uddeshya-world
+/pytest.ini @uddeshya-world
+/tox.ini @uddeshya-world
+/setup.cfg @uddeshya-world
+/ruff.toml @uddeshya-world
+/.ruff.toml @uddeshya-world
+/mypy.ini @uddeshya-world
+/.zenodo.json @uddeshya-world
+/CITATION.cff @uddeshya-world
+/docs/VALIDATION.md @uddeshya-world
+/docs/HOLDOUT.md @uddeshya-world
