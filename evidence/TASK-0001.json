@@ -1,0 +1,76 @@
+{
+  "task": "TASK-0001",
+  "commit": "c23a73ed72b03f40ea6ab7acf3b25b98834f0e1e",
+  "gate": "G0",
+  "checks": [
+    {
+      "id": "T0",
+      "result": "pass"
+    },
+    {
+      "id": "T1",
+      "result": "pass",
+      "cases": 12
+    },
+    {
+      "id": "T2",
+      "result": "pass",
+      "cases": 5,
+      "seed": [
+        0,
+        1,
+        2,
+        3,
+        42
+      ]
+    },
+    {
+      "id": "T3",
+      "result": "pass",
+      "cases": 10
+    }
+  ],
+  "golden": {
+    "public": "10/10",
+    "holdout": {
+      "result": "see-status",
+      "status_context": "holdout"
+    }
+  },
+  "benchmarks": [],
+  "mutation_score": null,
+  "protected_paths_changed": [
+    ".github/CODEOWNERS",
+    ".github/harness/check_evidence_diff.py",
+    ".github/harness/check_protected_paths.py",
+    ".github/harness/evidence.py",
+    ".github/harness/holdout.py",
+    ".github/harness/holdout_in_container.py",
+    ".github/harness/protected_paths.py",
+    ".github/harness/requirements-t0.txt",
+    ".github/harness/ruff-baseline.json",
+    ".github/harness/t0.py",
+    ".github/workflows/ci.yml",
+    ".github/workflows/holdout.yml",
+    ".github/workflows/protected-paths.yml",
+    ".zenodo.json",
+    "CITATION.cff",
+    "DECISIONS.md",
+    "Makefile",
+    "docs/HOLDOUT.md",
+    "docs/VALIDATION.md",
+    "gates/g0.yaml",
+    "pyproject.toml",
+    "tasks/TASK-0001.md",
+    "tasks/TEMPLATE.md"
+  ],
+  "tool_versions": {
+    "python": "3.12.3",
+    "pytest": "9.1.1",
+    "ruff": "0.16.9",
+    "mypy": "2.3.1",
+    "hypothesis": "none",
+    "jev": "none"
+  },
+  "reproduce": "make evidence TASK=TASK-0001"
+}

@@ -1,0 +1,40 @@
+# Protected paths for the MESA validation oracle (TASK-0001).
+# @uddeshya-world is the required owner. GitHub branch protection must
+# require a review from a code owner before these paths can merge.
+
+# Fixtures, test data, and expected outputs.
+# Built-in graphs live in fixtures.py. Expected outputs are the assertions
+# in tests/. Example documents live under schemas/examples/.
+/mesa_ibi_scanner/fixtures.py @uddeshya-world
+/tests/ @uddeshya-world
+/schemas/ @uddeshya-world
+
+# Gate definitions, thresholds, zone configs, and the claims ledger
+# (the ledger paths are reserved; no ledger file exists yet).
+/gates/ @uddeshya-world
+/thresholds/ @uddeshya-world
+/zones/ @uddeshya-world
+/claims/ @uddeshya-world
+/claims-ledger/ @uddeshya-world
+/CLAIMS.md @uddeshya-world
+
+# Task specs, the decision record, CI, and the Make entrypoint.
+# .github/ covers workflows, this CODEOWNERS file, and the harness scripts.
+/tasks/ @uddeshya-world
+/DECISIONS.md @uddeshya-world
+/.github/ @uddeshya-world
+/Makefile @uddeshya-world
+
+# Tooling that can change which tests run, and the citation / harness contract.
+/pyproject.toml @uddeshya-world
+**/conftest.py @uddeshya-world
+/pytest.ini @uddeshya-world
+/tox.ini @uddeshya-world
+/setup.cfg @uddeshya-world
+/ruff.toml @uddeshya-world
+/.ruff.toml @uddeshya-world
+/mypy.ini @uddeshya-world
+/.zenodo.json @uddeshya-world
+/CITATION.cff @uddeshya-world
+/docs/VALIDATION.md @uddeshya-world
+/docs/HOLDOUT.md @uddeshya-world

@@ -1,8 +1,8 @@
 mesa-ibi-scanner
 Copyright 2026 Uddeshya Kumar
 
-This product includes software developed as a research companion to the MESA thesis:
-"When the Package Cache Becomes a War Room" (DOI: https://doi.org/10.5281/zenodo.22744547).
+This product includes software developed as a research companion to the MESA paper
+(concept DOI: https://doi.org/10.5281/zenodo.22743175).
 
 Research prototype — not production security software.
 Property-vector / trifecta concepts build on public prior work (Willison lethal trifecta;

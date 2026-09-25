@@ -21,12 +21,9 @@ keywords:
   - interaction-boundary
   - ensemble-trifecta
   - MESA
-# Software DOI: pending Zenodo-GitHub enable — do not invent or reuse the paper DOI.
-# After Zenodo archives a tagged release, uncomment and fill:
-# identifiers:
-#   - type: doi
-#     value: "10.5281/zenodo.<software-version-doi>"  # minted by Zenodo; never invent
-# Paper DOI stays under preferred-citation only (scholarly work ≠ software deposit).
+# Software DOI: pending Zenodo-GitHub enable — do not invent or reuse the paper DOI
+# as an identifier of this software. Paper concept and version DOIs are related
+# works under preferred-citation and references.
 preferred-citation:
   type: article
   title: "Composition and Emergence on Shared Surfaces: Ensemble Trifecta Closure"
@@ -34,6 +31,55 @@ preferred-citation:
     - family-names: Kumar
       given-names: Uddeshya
   year: 2026
-  doi: "10.5281/zenodo.22761743"
-  url: "https://doi.org/10.5281/zenodo.22761743"
-  notes: "Version DOI for this release. Concept DOI (stable cite): 10.5281/zenodo.22743175"
+  doi: "10.5281/zenodo.22743175"
+  url: "https://doi.org/10.5281/zenodo.22743175"
+  notes: "Preprint, not peer-reviewed. Concept DOI (stable cite); resolves to the latest version, currently 10.5281/zenodo.22761743."
+references:
+  - type: article
+    title: "Composition and Emergence on Shared Surfaces: Ensemble Trifecta Closure"
+    authors:
+      - family-names: Kumar
+        given-names: Uddeshya
+    year: 2026
+    doi: 10.5281/zenodo.22743175
+    url: "https://doi.org/10.5281/zenodo.22743175"
+    notes: "Paper concept DOI (stable cite). Preprint, not peer-reviewed."
+  - type: article
+    title: "Composition and Emergence on Shared Surfaces: Ensemble Trifecta Closure"
+    authors:
+      - family-names: Kumar
+        given-names: Uddeshya
+    year: 2026
+    doi: 10.5281/zenodo.22761743
+    url: "https://doi.org/10.5281/zenodo.22761743"
+    notes: "Paper version DOI for the current record. Preprint, not peer-reviewed."
+  - type: blog
+    title: "METR incident investigation: OpenAI / Hugging Face"
+    authors:
+      - name: METR
+    year: 2026
+    url: "https://metr.org/blog/2026-08-26-openai-hugging-face-incident-investigation/"
+  - type: blog
+    title: "Redwood Research write-up: Hugging Face incident"
+    authors:
+      - name: Redwood Research
+    year: 2026
+    url: "https://www.redwoodresearch.org/research/hugging-face-incident"
+  - type: website
+    title: "collusion.wiki"
+    authors:
+      - name: collusion.wiki
+    year: 2026
+    url: "https://collusion.wiki/"
+  - type: blog
+    title: "Help Net Security: Unit 42 / TeamT5 DeepSeek reporting"
+    authors:
+      - name: Help Net Security
+    year: 2026
+    url: "https://www.helpnetsecurity.com/2026/08/03/deepseek-ai-autonomous-cyberattacks-hermes-agent/"
+  - type: blog
+    title: "developersdigest analysis of the OpenAI / Hugging Face incident report"
+    authors:
+      - name: developersdigest
+    year: 2026
+    url: "https://www.developersdigest.tech/blog/openai-hugging-face-incident-report-analysis-2026"

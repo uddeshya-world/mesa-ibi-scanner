@@ -1,0 +1,227 @@
+name: protected-paths
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  protected-paths:
+    name: protected-paths
+    runs-on: ubuntu-latest
+    steps:
+      # actions/checkout@v4.4.0 — base branch only. Never the pull request head.
+      - name: Check out base
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          persist-credentials: false
+
+      - name: Match changed paths against base CODEOWNERS
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          EVENT_ACTION: ${{ github.event.action }}
+          GH_TOKEN: ${{ github.token }}
+          HARD_PATTERNS: |
+            /mesa_ibi_scanner/fixtures.py
+            /tests/
+            /schemas/
+            /gates/
+            /thresholds/
+            /zones/
+            /claims/
+            /claims-ledger/
+            /CLAIMS.md
+            /tasks/
+            /DECISIONS.md
+            /.github/
+            /Makefile
+            /pyproject.toml
+            **/conftest.py
+            /pytest.ini
+            /tox.ini
+            /setup.cfg
+            /ruff.toml
+            /.ruff.toml
+            /mypy.ini
+            /.zenodo.json
+            /CITATION.cff
+            /docs/VALIDATION.md
+            /docs/HOLDOUT.md
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          import sys
+          import urllib.error
+          import urllib.request
+          from datetime import datetime
+          from pathlib import Path
+
+          sys.path.insert(0, str(Path(".github/harness").resolve()))
+          from protected_paths import is_protected, path_matches, parse_codeowners
+
+          LABEL = "owner-approved"
+          OWNER = "uddeshya-world"
+          token = os.environ["GH_TOKEN"]
+          repo = os.environ["GITHUB_REPOSITORY"]
+          number = os.environ["PR_NUMBER"]
+          action = os.environ["EVENT_ACTION"]
+          patterns = [
+              line.strip()
+              for line in os.environ["HARD_PATTERNS"].splitlines()
+              if line.strip()
+          ]
+
+
+          def fail(message: str) -> None:
+              raise SystemExit(f"protected-path check: fail ({message})")
+
+
+          def fetch(url: str) -> tuple[object, str]:
+              request = urllib.request.Request(
+                  url,
+                  headers={
+                      "Authorization": f"Bearer {token}",
+                      "Accept": "application/vnd.github+json",
+                      "X-GitHub-Api-Version": "2022-11-28",
+                      "User-Agent": "mesa-protected-paths",
+                  },
+              )
+              try:
+                  with urllib.request.urlopen(request) as response:
+                      payload = json.load(response)
+                      return payload, response.headers.get("Link", "")
+              except urllib.error.HTTPError as exc:
+                  fail(f"api {exc.code}")
+
+
+          def delete_label() -> None:
+              request = urllib.request.Request(
+                  f"https://api.github.com/repos/{repo}/issues/{number}/labels/{LABEL}",
+                  headers={
+                      "Authorization": f"Bearer {token}",
+                      "Accept": "application/vnd.github+json",
+                      "X-GitHub-Api-Version": "2022-11-28",
+                      "User-Agent": "mesa-protected-paths",
+                  },
+                  method="DELETE",
+              )
+              try:
+                  with urllib.request.urlopen(request) as response:
+                      if response.status not in (200, 204):
+                          fail(f"api {response.status}")
+              except urllib.error.HTTPError as exc:
+                  if exc.code != 404:
+                      fail(f"api {exc.code}")
+
+
+          def fetch_all(url: str) -> list[object]:
+              items: list[object] = []
+              while url:
+                  payload, link = fetch(url)
+                  if not isinstance(payload, list):
+                      fail("api shape")
+                  items.extend(payload)
+                  url = ""
+                  for part in link.split(","):
+                      if 'rel="next"' in part:
+                          url = part.split(";", 1)[0].strip().strip("<>")
+              return items
+
+
+          def stamp(value: str) -> datetime:
+              return datetime.fromisoformat(value.replace("Z", "+00:00"))
+
+
+          rows = parse_codeowners(Path(".github/CODEOWNERS").read_text(encoding="utf-8"))
+          labels_payload, _link = fetch(
+              f"https://api.github.com/repos/{repo}/issues/{number}/labels?per_page=100"
+          )
+          if not isinstance(labels_payload, list):
+              fail("api shape")
+          live = {
+              item.get("name")
+              for item in labels_payload
+              if isinstance(item, dict) and isinstance(item.get("name"), str)
+          }
+          # Git commit dates are not used. A new push or reopen drops the label.
+          revoked = False
+          if action in {"synchronize", "reopened"} and LABEL in live:
+              delete_label()
+              revoked = True
+              print("protected-path check: removed owner-approved")
+
+          files = fetch_all(
+              f"https://api.github.com/repos/{repo}/pulls/{number}/files?per_page=100"
+          )
+          changed: list[str] = []
+          for item in files:
+              if not isinstance(item, dict):
+                  fail("api shape")
+              filename = item.get("filename")
+              if isinstance(filename, str) and filename:
+                  changed.append(filename)
+              previous = item.get("previous_filename")
+              if isinstance(previous, str) and previous:
+                  changed.append(previous)
+
+          def protected(path: str) -> bool:
+              if is_protected(path, rows):
+                  return True
+              return any(path_matches(pattern, path) for pattern in patterns)
+
+          hits = sorted({path for path in changed if protected(path)})
+          if not hits:
+              print("protected-path check: pass (no protected paths changed)")
+              raise SystemExit(0)
+
+          print("protected paths changed:")
+          for path in hits:
+              print(f"  {path}")
+
+          events = fetch_all(
+              f"https://api.github.com/repos/{repo}/issues/{number}/events?per_page=100"
+          )
+          labeled: list[tuple[datetime, str]] = []
+          unlabeled: list[datetime] = []
+          for event in events:
+              if not isinstance(event, dict) or event.get("event") not in {"labeled", "unlabeled"}:
+                  continue
+              label = event.get("label")
+              if not isinstance(label, dict) or label.get("name") != LABEL:
+                  continue
+              created = event.get("created_at")
+              if not isinstance(created, str):
+                  continue
+              when = stamp(created)
+              if event.get("event") == "unlabeled":
+                  unlabeled.append(when)
+                  continue
+              actor = event.get("actor")
+              login = actor.get("login") if isinstance(actor, dict) else ""
+              if event.get("performed_via_github_app") is not None:
+                  login = ""
+              labeled.append((when, login if isinstance(login, str) else ""))
+          latest_label = max(labeled, default=None)
+          latest_unlabel = max(unlabeled, default=None)
+          approved = False
+          if not revoked and LABEL in live and latest_label is not None:
+              when, login = latest_label
+              still_applied = latest_unlabel is None or when > latest_unlabel
+              approved = login == OWNER and still_applied
+          if approved:
+              print("protected-path check: pass (owner-approved)")
+              raise SystemExit(0)
+          print("protected-path check: fail")
+          print(
+              "owner-approved label required from uddeshya-world "
+              "(removed automatically on every push)"
+          )
+          raise SystemExit(1)
+          PY

@@ -152,7 +152,7 @@ def format_sarif(
                                     )
                                 },
                                 "defaultConfiguration": {"level": "error"},
-                                "helpUri": "https://doi.org/10.5281/zenodo.22744547",
+                                "helpUri": "https://doi.org/10.5281/zenodo.22743175",
                             }
                         ],
                     }

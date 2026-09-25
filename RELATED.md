@@ -4,15 +4,15 @@
 
 | Artifact | Role | Identifier |
 |---|---|---|
-| MESA paper | Primary scholarly work | Version DOI [10.5281/zenodo.22761743](https://doi.org/10.5281/zenodo.22761743); concept [10.5281/zenodo.22743175](https://doi.org/10.5281/zenodo.22743175) |
-| mesa-ibi-scanner | Reference implementation of MESA-INV-01 | This repository (`v0.3.0`); **software DOI: pending Zenodo-GitHub enable** |
+| MESA paper | Primary scholarly work (self-published preprint, not peer-reviewed) | Cite concept DOI [10.5281/zenodo.22743175](https://doi.org/10.5281/zenodo.22743175), which resolves to the latest version, currently [10.5281/zenodo.22761743](https://doi.org/10.5281/zenodo.22761743). Zenodo resource type `publication-preprint`. |
+| mesa-ibi-scanner | Reference implementation of MESA-INV-01 | This repository (`v0.3.2`); **software DOI: pending Zenodo-GitHub enable** |
 
 ### Cross-link language (DataCite / Zenodo)
 
 | From | Relation | To |
 |---|---|---|
 | Paper | **isSupplementedBy** | Scanner (GitHub URL today; **software DOI** once minted) |
-| Scanner | **isSupplementTo** | Paper version DOI `10.5281/zenodo.22761743` (concept `10.5281/zenodo.22743175`; see `.zenodo.json`) |
+| Scanner | **isSupplementTo** | Paper concept DOI `10.5281/zenodo.22743175` and current version DOI `10.5281/zenodo.22761743`, both `publication-preprint` (see `.zenodo.json`) |
 
 When citing:
 
