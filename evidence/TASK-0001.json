@@ -1,0 +1,61 @@
+{
+  "task": "TASK-0001",
+  "commit": "b112fa261d460d6d3b42f6c9a727b908f4c28cba",
+  "gate": "G0",
+  "checks": [
+    {
+      "id": "T0",
+      "result": "pass"
+    },
+    {
+      "id": "T1",
+      "result": "pass",
+      "cases": 12
+    },
+    {
+      "id": "T2",
+      "result": "pass",
+      "cases": 5,
+      "seed": [
+        0,
+        1,
+        2,
+        3,
+        42
+      ]
+    },
+    {
+      "id": "T3",
+      "result": "pass",
+      "cases": 10
+    }
+  ],
+  "golden": {
+    "public": "10/10",
+    "holdout": "not configured"
+  },
+  "benchmarks": [],
+  "mutation_score": null,
+  "protected_paths_changed": [
+    ".github/CODEOWNERS",
+    ".github/harness/check_evidence_diff.py",
+    ".github/harness/check_protected_paths.py",
+    ".github/harness/evidence.py",
+    ".github/harness/holdout.py",
+    ".github/harness/protected_paths.py",
+    ".github/harness/requirements-t0.txt",
+    ".github/harness/ruff-baseline.json",
+    ".github/harness/t0.py",
+    ".github/workflows/ci.yml",
+    "DECISIONS.md",
+    "Makefile",
+    "gates/g0.yaml",
+    "tasks/TASK-0001.md",
+    "tasks/TEMPLATE.md"
+  ],
+  "tool_versions": {
+    "python": "3.12.3",
+    "jev": "none"
+  },
+  "reproduce": "make evidence TASK=TASK-0001"
+}
