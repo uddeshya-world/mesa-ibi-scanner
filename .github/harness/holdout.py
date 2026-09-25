@@ -1,21 +1,34 @@
 """Run private mesa-holdout fixtures. Logs are pass, fail, or not configured.
 
 Fixture names, file contents, paths, and diffs are never printed.
+
+Comparison includes the scanner ``version`` field. A version bump needs the
+expected files in mesa-holdout updated. See docs/HOLDOUT.md.
+
+Subcommands used by the owner-dispatched workflow (trusted code only):
+
+- ``clone DEST`` clones mesa-holdout. This is the only command that reads
+  ``MESA_HOLDOUT_TOKEN``.
+- ``compare ROOT OUTPUTS`` compares ``ROOT/expected`` with JSON files the
+  candidate wrote. It does not import or run the candidate.
 """
 
 from __future__ import annotations
 
 import contextlib
 import io
+import json
 import os
 import shutil
 import stat
 import subprocess
+import sys
 import tempfile
 from pathlib import Path
 
 
 def _comparable(payload: dict[str, object]) -> dict[str, object]:
+    # ``version`` is included on purpose. See docs/HOLDOUT.md.
     return {
         "version": payload.get("version"),
         "label": payload.get("label"),
@@ -39,8 +52,6 @@ def _json_files(root: Path) -> dict[str, Path]:
 
 
 def _evaluate(checkout: Path) -> bool:
-    import json
-
     from mesa_ibi_scanner.graph import evaluate_invariant
     from mesa_ibi_scanner.report import results_payload
     from mesa_ibi_scanner.topology import load_topology
@@ -62,6 +73,23 @@ def _evaluate(checkout: Path) -> bool:
         if not isinstance(expected_payload, dict):
             return False
         if _comparable(payload) != _comparable(expected_payload):
+            return False
+    return True
+
+
+def compare_outputs(holdout_root: Path, output_root: Path) -> bool:
+    """Compare candidate JSON files with expected files. Never runs candidate code."""
+    fixtures = _json_files(holdout_root / "fixtures")
+    expected = _json_files(holdout_root / "expected")
+    produced = _json_files(output_root)
+    if not fixtures or set(fixtures) != set(expected) or set(produced) != set(expected):
+        return False
+    for relative, expected_path in sorted(expected.items()):
+        produced_payload = json.loads(produced[relative].read_text(encoding="utf-8"))
+        expected_payload = json.loads(expected_path.read_text(encoding="utf-8"))
+        if not isinstance(produced_payload, dict) or not isinstance(expected_payload, dict):
+            return False
+        if _comparable(produced_payload) != _comparable(expected_payload):
             return False
     return True
 
@@ -99,6 +127,7 @@ def _clone(token: str, dest: Path) -> None:
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
     )
+    askpass.unlink(missing_ok=True)
     if proc.returncode != 0 or not dest.is_dir():
         raise RuntimeError("clone failed")
 
@@ -113,8 +142,17 @@ def _run(token: str) -> bool:
         shutil.rmtree(work, ignore_errors=True)
 
 
-def main() -> int:
-    token = os.environ.get("MESA_HOLDOUT_TOKEN", "").strip()
+def _token() -> str:
+    return os.environ.get("MESA_HOLDOUT_TOKEN", "").strip()
+
+
+def _report(passed: bool) -> int:
+    print("holdout: pass" if passed else "holdout: fail")
+    return 0 if passed else 1
+
+
+def _local() -> int:
+    token = _token()
     if not token:
         print("holdout: not configured")
         return 1
@@ -125,8 +163,45 @@ def main() -> int:
     except Exception:  # noqa: BLE001 — logs must not contain fixture paths or tracebacks
         print("holdout: fail")
         return 1
-    print("holdout: pass" if passed else "holdout: fail")
-    return 0 if passed else 1
+    return _report(passed)
+
+
+def _clone_command(dest: Path) -> int:
+    token = _token()
+    if not token:
+        print("holdout: not configured")
+        return 1
+    buffer = io.StringIO()
+    try:
+        with contextlib.redirect_stdout(buffer), contextlib.redirect_stderr(buffer):
+            _clone(token, dest)
+    except Exception:  # noqa: BLE001 — logs must not contain fixture paths or tracebacks
+        print("holdout: fail")
+        return 1
+    return 0
+
+
+def _compare_command(holdout_root: Path, output_root: Path) -> int:
+    buffer = io.StringIO()
+    try:
+        with contextlib.redirect_stdout(buffer), contextlib.redirect_stderr(buffer):
+            passed = compare_outputs(holdout_root, output_root)
+    except Exception:  # noqa: BLE001 — logs must not contain fixture paths or tracebacks
+        print("holdout: fail")
+        return 1
+    return _report(passed)
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = list(sys.argv[1:] if argv is None else argv)
+    if not args:
+        return _local()
+    if args[0] == "clone" and len(args) == 2:
+        return _clone_command(Path(args[1]))
+    if args[0] == "compare" and len(args) == 3:
+        return _compare_command(Path(args[1]), Path(args[2]))
+    print("holdout: fail")
+    return 1
 
 
 if __name__ == "__main__":

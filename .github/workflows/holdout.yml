@@ -1,0 +1,191 @@
+name: holdout
+
+on:
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: Pull request number to evaluate
+        required: true
+        type: string
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  statuses: write
+
+jobs:
+  holdout:
+    runs-on: ubuntu-latest
+    environment: holdout
+    steps:
+      - name: Resolve candidate ref
+        id: refs
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          PR_NUMBER: ${{ github.event.inputs.pr_number }}
+          PUSH_SHA: ${{ github.sha }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            if ! [[ "$PR_NUMBER" =~ ^[0-9]+$ ]]; then
+              echo "holdout: fail"
+              exit 1
+            fi
+            sha=$(gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}" --jq .head.sha)
+            echo "candidate_ref=refs/pull/${PR_NUMBER}/head" >> "$GITHUB_OUTPUT"
+            echo "head_sha=${sha}" >> "$GITHUB_OUTPUT"
+          else
+            echo "candidate_ref=${PUSH_SHA}" >> "$GITHUB_OUTPUT"
+            echo "head_sha=${PUSH_SHA}" >> "$GITHUB_OUTPUT"
+          fi
+
+      # actions/checkout@v4.4.0 — trusted harness from main, not the PR head.
+      - name: Check out trusted main
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: main
+          path: trusted
+          persist-credentials: false
+
+      # actions/checkout@v4.4.0 — candidate tree. Credentials are not left behind.
+      - name: Check out candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ steps.refs.outputs.candidate_ref }}
+          path: candidate
+          persist-credentials: false
+
+      - name: Build candidate wheel
+        env:
+          GITHUB_TOKEN: ""
+          GH_TOKEN: ""
+          MESA_HOLDOUT_TOKEN: ""
+        run: |
+          set -euo pipefail
+          python -m pip install --upgrade pip build
+          python -m build --wheel candidate --outdir "$RUNNER_TEMP/wheels"
+
+      - name: Clone mesa-holdout
+        id: clone
+        env:
+          MESA_HOLDOUT_TOKEN: ${{ secrets.MESA_HOLDOUT_TOKEN }}
+          GITHUB_TOKEN: ""
+          GH_TOKEN: ""
+        run: |
+          set +e
+          line=$(python3 trusted/.github/harness/holdout.py clone "$RUNNER_TEMP/holdout")
+          code=$?
+          set -e
+          if [ "$code" -ne 0 ]; then
+            if [ -z "$line" ]; then
+              line="holdout: fail"
+            fi
+            printf '%s\n' "$line"
+            printf '%s\n' "$line" > "$RUNNER_TEMP/holdout-result.txt"
+            exit "$code"
+          fi
+
+      - name: Scan fixtures offline
+        if: steps.clone.outcome == 'success'
+        env:
+          GITHUB_TOKEN: ""
+          GH_TOKEN: ""
+          MESA_HOLDOUT_TOKEN: ""
+        run: |
+          set -euo pipefail
+          work="$RUNNER_TEMP/candidate-image"
+          rm -rf "$work"
+          mkdir -p "$work/wheels" "$RUNNER_TEMP/holdout-outputs"
+          cp "$RUNNER_TEMP"/wheels/*.whl "$work/wheels/"
+          cp trusted/.github/harness/holdout_in_container.py "$work/driver.py"
+          cat > "$work/Dockerfile" <<'EOF'
+          FROM python:3.12-slim
+          COPY wheels/ /wheels/
+          RUN pip install --no-cache-dir /wheels/*.whl && rm -rf /wheels
+          COPY driver.py /opt/mesa-holdout-driver.py
+          ENV PYTHONDONTWRITEBYTECODE=1
+          ENTRYPOINT ["python", "-B", "/opt/mesa-holdout-driver.py"]
+          EOF
+          # The image pull and build use the host network. The run does not.
+          docker build -t mesa-holdout-candidate "$work"
+          docker run --rm --network none --read-only \
+            --tmpfs /tmp:rw,nosuid,size=64m \
+            -v "$RUNNER_TEMP/holdout/fixtures:/fixtures:ro" \
+            -v "$RUNNER_TEMP/holdout-outputs:/outputs" \
+            -e HOME=/tmp \
+            mesa-holdout-candidate >/dev/null 2>&1 || true
+
+      - name: Compare with trusted holdout
+        id: compare
+        if: steps.clone.outcome == 'success'
+        env:
+          GITHUB_TOKEN: ""
+          GH_TOKEN: ""
+          MESA_HOLDOUT_TOKEN: ""
+        run: |
+          set +e
+          line=$(python3 trusted/.github/harness/holdout.py compare "$RUNNER_TEMP/holdout" "$RUNNER_TEMP/holdout-outputs")
+          code=$?
+          set -euo pipefail
+          if [ -z "$line" ]; then
+            line="holdout: fail"
+            code=1
+          fi
+          printf '%s\n' "$line"
+          printf '%s\n' "$line" > "$RUNNER_TEMP/holdout-result.txt"
+          test "$code" -eq 0
+          test "$line" = "holdout: pass"
+
+      - name: Post holdout status
+        if: always()
+        env:
+          HEAD_SHA: ${{ steps.refs.outputs.head_sha }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          if [ -z "$HEAD_SHA" ]; then
+            echo "holdout: fail"
+            exit 1
+          fi
+          result_file="$RUNNER_TEMP/holdout-result.txt"
+          if [ -f "$result_file" ]; then
+            result=$(tr -d '\r' < "$result_file")
+          else
+            echo "holdout: fail"
+            result="holdout: fail"
+          fi
+          case "$result" in
+            "holdout: pass"|"holdout: fail"|"holdout: not configured") ;;
+            *) result="holdout: fail" ;;
+          esac
+          if [ "$result" = "holdout: pass" ]; then
+            state="success"
+          else
+            state="failure"
+          fi
+          python3 - "$HEAD_SHA" "$state" "$result" <<'PY'
+          import json, os, sys, urllib.request
+          sha, state, result = sys.argv[1], sys.argv[2], sys.argv[3]
+          body = json.dumps(
+              {"state": state, "context": "holdout", "description": result}
+          ).encode()
+          repo = os.environ["GITHUB_REPOSITORY"]
+          request = urllib.request.Request(
+              f"https://api.github.com/repos/{repo}/statuses/{sha}",
+              data=body,
+              headers={
+                  "Authorization": f"Bearer {os.environ['GH_TOKEN']}",
+                  "Accept": "application/vnd.github+json",
+                  "Content-Type": "application/json",
+                  "X-GitHub-Api-Version": "2022-11-28",
+                  "User-Agent": "mesa-holdout",
+              },
+              method="POST",
+          )
+          with urllib.request.urlopen(request) as response:
+              if response.status not in (200, 201):
+                  raise SystemExit(1)
+          PY
+          test "$state" = "success"
