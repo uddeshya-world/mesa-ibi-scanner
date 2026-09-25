@@ -11,9 +11,9 @@
 > **Disclaimer:** Not production policy enforcement. No exploit recipes. Toy fixtures are *shaped like* public Hugging Face Artifactory / DseWiki *composition lessons* for unit tests only.
 
 **Paper DOI** (concept / stable cite): https://doi.org/10.5281/zenodo.22743175  
-**Paper version DOI** (this release): https://doi.org/10.5281/zenodo.22761743  
+**Paper version DOI** (current record; the concept DOI above is the preferred citation): https://doi.org/10.5281/zenodo.22761743  
 **Software DOI:** pending Zenodo-GitHub enable (do not invent; not minted yet)  
-Release: **v0.3.0** (toolization — topology `--input`, CI formats, exit codes)
+Release: **v0.3.2** (toolization — topology `--input`, CI formats, exit codes)
 
 ## Invariant 1 (cut semantics)
 
@@ -99,7 +99,7 @@ Exact enablement steps (webhook + tagged release): [Zenodo — Enable a reposito
 1. Sign in at [zenodo.org](https://zenodo.org) with the GitHub account that owns `uddeshya-world/mesa-ibi-scanner`.
 2. Zenodo → profile → **GitHub** → **Sync now** → toggle **ON** for this repo (installs the release webhook).
 3. Publish a **new** GitHub Release **after** the toggle (Zenodo does not auto-import past releases such as existing `v0.3.0`).
-4. Copy the software DOI Zenodo mints; update this README badge, `CITATION.cff` `identifiers`, and paper related works. Keep paper version DOI `10.5281/zenodo.22761743` as `preferred-citation` (concept `10.5281/zenodo.22743175`).
+4. Copy the software DOI Zenodo mints; update this README badge, `CITATION.cff` `identifiers`, and paper related works. Keep the concept DOI `10.5281/zenodo.22743175` as `preferred-citation` (it resolves to the current version DOI `10.5281/zenodo.22761743`).
 
 ## What it does *not* do
 

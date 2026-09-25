@@ -7,24 +7,38 @@ machine_checks:
     implements:
       - Makefile
       - .github/harness/t0.py
-  - id: codeowners-protected-paths
+  - id: codeowners_review_required
     description: >
-      CODEOWNERS blocks a pull request that touches a protected path unless
-      the pull request carries the owner-approved label.
-    command: python3 .github/harness/check_protected_paths.py
+      CODEOWNERS lists the protected paths. Requiring a review from the code
+      owner is a repository ruleset. The owner records that evidence (a ruleset
+      screenshot or API response). This check only confirms the file and the
+      path matcher.
+    command: python3 .github/harness/protected_paths.py
     implements:
       - .github/CODEOWNERS
+      - .github/harness/protected_paths.py
+  - id: protected_paths_label_check
+    description: >
+      The protected-paths workflow lists changed protected paths and fails
+      unless the live owner-approved label was applied by @uddeshya-world
+      after the head commit. It checks out the base branch only and runs no
+      pull-request code.
+    command: python3 .github/harness/check_protected_paths.py
+    implements:
+      - .github/workflows/protected-paths.yml
       - .github/harness/check_protected_paths.py
       - .github/harness/protected_paths.py
-      - .github/workflows/ci.yml
   - id: holdout-pass-fail-only
     description: >
-      The holdout job runs private fixtures and reports pass or fail only.
-      When MESA_HOLDOUT_TOKEN is absent it prints "holdout: not configured"
-      and fails. It never passes silently.
-    command: make t3-holdout
+      The owner-dispatched holdout workflow prints one line: pass, fail, or
+      not configured. A missing token fails closed. The pull-request CI job
+      is a stub and does not receive the token. make t3-holdout still fails
+      closed when the token is absent.
+    command: python3 .github/harness/holdout.py
     implements:
       - .github/harness/holdout.py
+      - .github/harness/holdout_in_container.py
+      - .github/workflows/holdout.yml
       - .github/workflows/ci.yml
       - docs/HOLDOUT.md
 human_signoff:
