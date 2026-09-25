@@ -9,6 +9,7 @@ import platform
 import re
 import subprocess
 import sys
+from importlib import metadata
 from pathlib import Path
 
 from protected_paths import git, protected_changes, repo_root
@@ -43,8 +44,78 @@ def _parents(sha: str) -> list[str]:
 
 
 def _diff_names(parent: str, sha: str) -> list[str]:
-    out = git("diff", "--name-only", parent, sha)
+    out = git("diff", "--no-renames", "--name-only", parent, sha)
     return [line for line in out.splitlines() if line]
+
+
+def _rev_parse(ref: str) -> str | None:
+    proc = subprocess.run(
+        ["git", "rev-parse", "--verify", "--quiet", ref],
+        cwd=ROOT,
+        check=False,
+        text=True,
+        capture_output=True,
+    )
+    if proc.returncode != 0:
+        return None
+    sha = proc.stdout.strip()
+    return sha or None
+
+
+def _is_ancestor(ancestor: str, descendant: str) -> bool:
+    proc = subprocess.run(
+        ["git", "merge-base", "--is-ancestor", ancestor, descendant],
+        cwd=ROOT,
+        check=False,
+        text=True,
+        capture_output=True,
+    )
+    return proc.returncode == 0
+
+
+def _main_tip() -> str | None:
+    for ref in ("origin/main", "main"):
+        sha = _rev_parse(ref)
+        if sha:
+            return sha
+    return None
+
+
+def _on_first_parent(sha: str, tip: str) -> bool:
+    proc = subprocess.run(
+        ["git", "rev-list", "--first-parent", tip],
+        cwd=ROOT,
+        check=False,
+        text=True,
+        capture_output=True,
+    )
+    if proc.returncode != 0:
+        return False
+    return sha in proc.stdout.split()
+
+
+def _follow_merge(parents: list[str]) -> str:
+    """Continue along the pull-request branch.
+
+    GitHub's "Update branch" merge records the PR tip as the first parent and
+    main as the second. Following the second parent would attest main.
+    A merge of the PR into main records main as the first parent; follow the
+    second parent in that case, including after that merge is itself main.
+    Any other merge stays on the first parent.
+    """
+    first, second = parents[0], parents[1]
+    main = _main_tip()
+    if main is None:
+        return first
+    first_on_main = first == main or _is_ancestor(first, main)
+    second_on_main = second == main or _is_ancestor(second, main)
+    if second_on_main and not first_on_main:
+        return first
+    if first_on_main and not second_on_main:
+        return second
+    if first_on_main and second_on_main and _on_first_parent(first, main) and not _on_first_parent(second, main):
+        return second
+    return first
 
 
 def _evidence_path(path: str) -> bool:
@@ -55,15 +126,17 @@ def attested_commit() -> str:
     """Commit whose tree, aside from evidence JSON, is the code under test.
 
     A file cannot embed the hash of the git commit that contains it.
-    Evidence-only commits are skipped. Merge commits continue from the
-    second parent (the branch that was merged) so a merge records the
-    same commit as the pull request head.
+    Evidence-only commits are skipped. Merge commits are followed only along
+    the pull-request branch: an "Update branch" merge stays on the first
+    parent, and a merge of the PR into main follows the second parent.
+    Squash merges drop that parent link, so the repository must use merge
+    commits only.
     """
     current = git("rev-parse", "HEAD").strip()
     for _ in range(50):
         parents = _parents(current)
         if len(parents) >= 2:
-            current = parents[1]
+            current = _follow_merge(parents)
             continue
         if len(parents) == 1:
             names = _diff_names(parents[0], current)
@@ -137,12 +210,11 @@ def _property_seeds() -> list[int]:
     return seeds
 
 
-def _holdout_result() -> str:
-    proc = _run([sys.executable, ".github/harness/holdout.py"])
-    line = proc.stdout.strip()
-    if line in {"holdout: pass", "holdout: fail", "holdout: not configured"}:
-        return line.split(": ", 1)[1]
-    return "fail"
+def _tool_version(dist: str) -> str:
+    try:
+        return metadata.version(dist)
+    except metadata.PackageNotFoundError:
+        return "none"
 
 
 def _check(check_id: str, result: str, cases: int | None = None, seed: object = None) -> dict[str, object]:
@@ -188,18 +260,27 @@ def build(task: str) -> dict[str, object]:
             sys.stderr.write(f"evidence: {label} failed\n")
             sys.stderr.write(proc.stdout)
             sys.stderr.write(proc.stderr)
-    holdout = _holdout_result()
     public = f"{t3_passed}/{t3_total}" if t3_total else "0/0"
     payload: dict[str, object] = {
         "task": task,
         "commit": attested_commit(),
         "gate": gate,
         "checks": checks,
-        "golden": {"public": public, "holdout": holdout},
+        "golden": {
+            "public": public,
+            "holdout": {"result": "see-status", "status_context": "holdout"},
+        },
         "benchmarks": [],
         "mutation_score": None,
         "protected_paths_changed": protected_changes(),
-        "tool_versions": {"python": platform.python_version(), "jev": "none"},
+        "tool_versions": {
+            "python": platform.python_version(),
+            "pytest": _tool_version("pytest"),
+            "ruff": _tool_version("ruff"),
+            "mypy": _tool_version("mypy"),
+            "hypothesis": _tool_version("hypothesis"),
+            "jev": "none",
+        },
         "reproduce": f"make evidence TASK={task}",
     }
     return payload

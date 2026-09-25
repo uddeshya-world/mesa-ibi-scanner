@@ -8,11 +8,11 @@ The failure modes these rules exist to stop: editing or deleting a failing test,
 
 1. **Oracle separation.** The agent that implements a change does not author or approve the tests that gate it. A separate test-author role writes tests from the spec. A human approves them.
 2. **Spec before code.** Every task starts from a written spec with named acceptance checks. Those checks are merged before implementation starts.
-3. **Protected paths.** Golden fixtures, expected outputs, thresholds, zone configs, schemas, gate definitions, and the claims ledger sit under CODEOWNERS (`.github/CODEOWNERS`). Changing them needs human approval and a written reason. In this repository the protected set also covers the harness itself: `tasks/`, `DECISIONS.md`, `.github/` (workflows, CODEOWNERS, harness scripts, the lint baseline), and `Makefile`.
-4. **Holdout fixtures.** `mesa-holdout` holds fixtures and scenario variants that implementer agents never see. CI runs them. The log is pass or fail only. See `docs/HOLDOUT.md`.
+3. **Protected paths.** Golden fixtures, expected outputs, thresholds, zone configs, schemas, gate definitions, and the claims ledger sit under CODEOWNERS (`.github/CODEOWNERS`). Changing them needs human approval and a written reason. In this repository the protected set also covers the harness itself: `tasks/`, `DECISIONS.md`, `.github/` (workflows, CODEOWNERS, harness scripts, the lint baseline), `Makefile`, `pyproject.toml`, `conftest.py`, pytest/tox/ruff/mypy config files, `.zenodo.json`, `CITATION.cff`, `docs/VALIDATION.md`, and `docs/HOLDOUT.md`.
+4. **Holdout fixtures.** `mesa-holdout` holds fixtures and scenario variants that implementer agents never see. The owner dispatches that run. The log is pass or fail only. See `docs/HOLDOUT.md`.
 5. **Pre-registration.** Metric definitions and pass thresholds are committed before the measurement run. A threshold changed after a run invalidates that run.
 6. **Mutation testing.** Core modules must reach a mutation score target, so tests prove they can fail. Week 0 records `mutation_score` as null; the weekly mutation tier is not this milestone.
-7. **Reproducibility.** Every reported number comes with the command, commit, seed, input dataset hash, and tool versions. CI re-runs it. `make evidence TASK=<id>` writes `evidence/<id>.json`. CI rebuilds that file and diffs it against the committed bytes.
+7. **Reproducibility.** Every reported number comes with the command, commit, seed, input dataset hash, and tool versions. CI re-runs it. `make evidence TASK=<id>` writes `evidence/<id>.json`. CI rebuilds that file and diffs it against the committed bytes. The attested commit skips evidence-only commits and follows merge commits only, no squash: a squash merge drops the parent link that walk uses. GitHub's "Update branch" merge is followed along the pull-request branch (its first parent), not onto main. Set the repository merge options to allow merge commits and disable squash.
 8. **Property tests over examples.** Core behaviour is specified as properties checked on generated graphs, not only hand-picked cases. Week 0 runs the existing seeded property module. It does not yet run the later property catalogue at 10,000 cases; those properties depend on lattice, frontier, temporal, and enforcement work that is out of scope here.
 9. **No network in tests.** Only the scenario lab talks to services, and only to lab infrastructure. T0 schema validation uses the schemas in this repo. The holdout job's clone is CI, not a unit test, and it runs only when the owner has configured the token.
 10. **Human framing.** Abstracts, READMEs, claims, and the decision record are decided by a human. Agents propose. Humans choose. `DECISIONS.md` stays draft until the owner approves it.
@@ -34,7 +34,7 @@ The failure modes these rules exist to stop: editing or deleting a failing test,
 | `make t1` | T1 unit | `tests/test_topology.py`, `tests/test_topology_pdp_optional.py`, `tests/test_cli_output.py` |
 | `make t2` | T2 property | `tests/test_properties.py` (fixed `random.Random` seeds) |
 | `make t3` | T3 golden, public | `tests/test_closure.py` |
-| `make t3-holdout` | T3 golden, holdout | `mesa-holdout`, or `holdout: not configured` (failure) |
+| `make t3-holdout` | T3 golden, holdout | Local `holdout.py`. Without the token: `holdout: not configured` (failure). The CI result is the `holdout` commit status |
 | `make verify` | T0 then T1 then T2 then T3 | Stops on the first failure. Does not call holdout |
 
 The 27 tests already in the tree are not modified by this harness. T1, T2, and T3 select disjoint files and together cover that set once.
