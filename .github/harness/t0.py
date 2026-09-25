@@ -319,6 +319,43 @@ def check_secrets() -> None:
         _fail("t0 secrets: findings")
 
 
+def check_test_tiers() -> None:
+    """Every tests/test_*.py is assigned to exactly one of t1, t2, or t3."""
+    text = (ROOT / "Makefile").read_text(encoding="utf-8")
+    tiers = ("t1", "t2", "t3")
+    assigned: dict[str, list[str]] = {name: [] for name in tiers}
+    current: str | None = None
+    for line in text.splitlines():
+        if not line.startswith("\t"):
+            current = None
+            for name in tiers:
+                if line.startswith(f"{name}:"):
+                    current = name
+                    break
+            continue
+        if current is None:
+            continue
+        assigned[current].extend(re.findall(r"tests/test_[A-Za-z0-9_]+\.py", line))
+    disk = sorted(path.relative_to(ROOT).as_posix() for path in (ROOT / "tests").glob("test_*.py"))
+    counts: Counter[str] = Counter(path for paths in assigned.values() for path in paths)
+    missing = [path for path in disk if counts[path] == 0]
+    duplicated = sorted(path for path, count in counts.items() if count != 1)
+    unknown = sorted(path for path in counts if path not in disk)
+    if missing or duplicated or unknown or not disk:
+        if missing:
+            print("t0 tiers missing: " + ", ".join(missing))
+        if duplicated:
+            print("t0 tiers duplicated: " + ", ".join(duplicated))
+        if unknown:
+            print("t0 tiers unknown: " + ", ".join(unknown))
+        _fail("t0 tiers: tests/test_*.py must belong to exactly one of t1, t2, t3")
+    print(
+        "t0 tiers: "
+        + ", ".join(f"{name}={len(paths)}" for name, paths in assigned.items())
+        + f" files={len(disk)}"
+    )
+
+
 def check_version_consistency() -> None:
     pyproject = re.search(
         r'version\s*=\s*"([^"]+)"',
@@ -354,6 +391,7 @@ def main() -> int:
         ("schema", check_schemas),
         ("licence", check_licence),
         ("secrets", check_secrets),
+        ("tiers", check_test_tiers),
         ("version", check_version_consistency),
     )
     failed = False
