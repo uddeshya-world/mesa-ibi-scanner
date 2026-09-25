@@ -1,0 +1,260 @@
+[
+  {
+    "path": "mesa_ibi_scanner/fixtures.py",
+    "code": "I001",
+    "column": 1,
+    "message": "Import block is un-sorted or un-formatted"
+  },
+  {
+    "path": "mesa_ibi_scanner/graph.py",
+    "code": "F401",
+    "column": 32,
+    "message": "`typing.Optional` imported but unused"
+  },
+  {
+    "path": "mesa_ibi_scanner/graph.py",
+    "code": "UP006",
+    "column": 6,
+    "message": "Use `set` instead of `Set` for type annotation"
+  },
+  {
+    "path": "mesa_ibi_scanner/graph.py",
+    "code": "UP006",
+    "column": 9,
+    "message": "Use `dict` instead of `Dict` for type annotation"
+  },
+  {
+    "path": "mesa_ibi_scanner/graph.py",
+    "code": "UP006",
+    "column": 11,
+    "message": "Use `set` instead of `Set` for type annotation"
+  },
+  {
+    "path": "mesa_ibi_scanner/graph.py",
+    "code": "UP006",
+    "column": 11,
+    "message": "Use `set` instead of `Set` for type annotation"
+  },
+  {
+    "path": "mesa_ibi_scanner/graph.py",
+    "code": "UP006",
+    "column": 12,
+    "message": "Use `dict` instead of `Dict` for type annotation"
+  },
+  {
+    "path": "mesa_ibi_scanner/graph.py",
+    "code": "UP006",
+    "column": 12,
+    "message": "Use `list` instead of `List` for type annotation"
+  },
+  {
+    "path": "mesa_ibi_scanner/graph.py",
+    "code": "UP006",
+    "column": 14,
+    "message": "Use `dict` instead of `Dict` for type annotation"
+  },
+  {
+    "path": "mesa_ibi_scanner/graph.py",
+    "code": "UP006",
+    "column": 14,
+    "message": "Use `dict` instead of `Dict` for type annotation"
+  },
+  {
+    "path": "mesa_ibi_scanner/graph.py",
+    "code": "UP006",
+    "column": 14,
+    "message": "Use `list` instead of `List` for type annotation"
+  },
+  {
+    "path": "mesa_ibi_scanner/graph.py",
+    "code": "UP006",
+    "column": 15,
+    "message": "Use `dict` instead of `Dict` for type annotation"
+  },
+  {
+    "path": "mesa_ibi_scanner/graph.py",
+    "code": "UP006",
+    "column": 18,
+    "message": "Use `tuple` instead of `Tuple` for type annotation"
+  },
+  {
+    "path": "mesa_ibi_scanner/graph.py",
+    "code": "UP006",
+    "column": 24,
+    "message": "Use `list` instead of `List` for type annotation"
+  },
+  {
+    "path": "mesa_ibi_scanner/graph.py",
+    "code": "UP006",
+    "column": 24,
+    "message": "Use `list` instead of `List` for type annotation"
+  },
+  {
+    "path": "mesa_ibi_scanner/graph.py",
+    "code": "UP006",
+    "column": 30,
+    "message": "Use `set` instead of `Set` for type annotation"
+  },
+  {
+    "path": "mesa_ibi_scanner/graph.py",
+    "code": "UP006",
+    "column": 36,
+    "message": "Use `dict` instead of `Dict` for type annotation"
+  },
+  {
+    "path": "mesa_ibi_scanner/graph.py",
+    "code": "UP006",
+    "column": 43,
+    "message": "Use `list` instead of `List` for type annotation"
+  },
+  {
+    "path": "mesa_ibi_scanner/graph.py",
+    "code": "UP006",
+    "column": 46,
+    "message": "Use `list` instead of `List` for type annotation"
+  },
+  {
+    "path": "mesa_ibi_scanner/graph.py",
+    "code": "UP006",
+    "column": 48,
+    "message": "Use `dict` instead of `Dict` for type annotation"
+  },
+  {
+    "path": "mesa_ibi_scanner/graph.py",
+    "code": "UP035",
+    "column": 1,
+    "message": "`typing.Dict` is deprecated, use `dict` instead"
+  },
+  {
+    "path": "mesa_ibi_scanner/graph.py",
+    "code": "UP035",
+    "column": 1,
+    "message": "`typing.List` is deprecated, use `list` instead"
+  },
+  {
+    "path": "mesa_ibi_scanner/graph.py",
+    "code": "UP035",
+    "column": 1,
+    "message": "`typing.Set` is deprecated, use `set` instead"
+  },
+  {
+    "path": "mesa_ibi_scanner/graph.py",
+    "code": "UP035",
+    "column": 1,
+    "message": "`typing.Tuple` is deprecated, use `tuple` instead"
+  },
+  {
+    "path": "mesa_ibi_scanner/report.py",
+    "code": "UP006",
+    "column": 6,
+    "message": "Use `dict` instead of `Dict` for type annotation"
+  },
+  {
+    "path": "mesa_ibi_scanner/report.py",
+    "code": "UP006",
+    "column": 20,
+    "message": "Use `list` instead of `List` for type annotation"
+  },
+  {
+    "path": "mesa_ibi_scanner/report.py",
+    "code": "UP006",
+    "column": 25,
+    "message": "Use `dict` instead of `Dict` for type annotation"
+  },
+  {
+    "path": "mesa_ibi_scanner/report.py",
+    "code": "UP035",
+    "column": 1,
+    "message": "Import from `collections.abc` instead: `Sequence`"
+  },
+  {
+    "path": "mesa_ibi_scanner/report.py",
+    "code": "UP035",
+    "column": 1,
+    "message": "`typing.Dict` is deprecated, use `dict` instead"
+  },
+  {
+    "path": "mesa_ibi_scanner/report.py",
+    "code": "UP035",
+    "column": 1,
+    "message": "`typing.List` is deprecated, use `list` instead"
+  },
+  {
+    "path": "mesa_ibi_scanner/report.py",
+    "code": "UP045",
+    "column": 16,
+    "message": "Use `X | None` for type annotations"
+  },
+  {
+    "path": "mesa_ibi_scanner/topology.py",
+    "code": "F401",
+    "column": 16,
+    "message": "`jsonschema` imported but unused; consider using `importlib.util.find_spec` to test for availability"
+  },
+  {
+    "path": "mesa_ibi_scanner/topology.py",
+    "code": "UP006",
+    "column": 16,
+    "message": "Use `list` instead of `List` for type annotation"
+  },
+  {
+    "path": "mesa_ibi_scanner/topology.py",
+    "code": "UP006",
+    "column": 23,
+    "message": "Use `dict` instead of `Dict` for type annotation"
+  },
+  {
+    "path": "mesa_ibi_scanner/topology.py",
+    "code": "UP006",
+    "column": 28,
+    "message": "Use `dict` instead of `Dict` for type annotation"
+  },
+  {
+    "path": "mesa_ibi_scanner/topology.py",
+    "code": "UP007",
+    "column": 12,
+    "message": "Use `X | Y` for type annotations"
+  },
+  {
+    "path": "mesa_ibi_scanner/topology.py",
+    "code": "UP035",
+    "column": 1,
+    "message": "`typing.Dict` is deprecated, use `dict` instead"
+  },
+  {
+    "path": "mesa_ibi_scanner/topology.py",
+    "code": "UP035",
+    "column": 1,
+    "message": "`typing.List` is deprecated, use `list` instead"
+  },
+  {
+    "path": "tests/test_closure.py",
+    "code": "I001",
+    "column": 1,
+    "message": "Import block is un-sorted or un-formatted"
+  },
+  {
+    "path": "tests/test_properties.py",
+    "code": "F401",
+    "column": 5,
+    "message": "`mesa_ibi_scanner.graph.ZERO` imported but unused"
+  },
+  {
+    "path": "tests/test_properties.py",
+    "code": "F401",
+    "column": 5,
+    "message": "`mesa_ibi_scanner.graph.join` imported but unused"
+  },
+  {
+    "path": "tests/test_properties.py",
+    "code": "I001",
+    "column": 1,
+    "message": "Import block is un-sorted or un-formatted"
+  },
+  {
+    "path": "tests/test_topology.py",
+    "code": "I001",
+    "column": 1,
+    "message": "Import block is un-sorted or un-formatted"
+  }
+]

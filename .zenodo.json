@@ -24,6 +24,12 @@
   "version": "0.3.2",
   "related_identifiers": [
     {
+      "identifier": "10.5281/zenodo.22743175",
+      "relation": "isSupplementTo",
+      "resource_type": "publication-article",
+      "scheme": "doi"
+    },
+    {
       "identifier": "10.5281/zenodo.22761743",
       "relation": "isSupplementTo",
       "resource_type": "publication-article",
@@ -33,6 +39,36 @@
       "identifier": "https://github.com/uddeshya-world/mesa-ibi-scanner",
       "relation": "isIdenticalTo",
       "resource_type": "software",
+      "scheme": "url"
+    },
+    {
+      "identifier": "https://metr.org/blog/2026-08-26-openai-hugging-face-incident-investigation/",
+      "relation": "references",
+      "resource_type": "publication-other",
+      "scheme": "url"
+    },
+    {
+      "identifier": "https://www.redwoodresearch.org/research/hugging-face-incident",
+      "relation": "references",
+      "resource_type": "publication-other",
+      "scheme": "url"
+    },
+    {
+      "identifier": "https://collusion.wiki/",
+      "relation": "references",
+      "resource_type": "publication-other",
+      "scheme": "url"
+    },
+    {
+      "identifier": "https://www.helpnetsecurity.com/2026/08/03/deepseek-ai-autonomous-cyberattacks-hermes-agent/",
+      "relation": "references",
+      "resource_type": "publication-other",
+      "scheme": "url"
+    },
+    {
+      "identifier": "https://www.developersdigest.tech/blog/openai-hugging-face-incident-report-analysis-2026",
+      "relation": "references",
+      "resource_type": "publication-other",
       "scheme": "url"
     }
   ]

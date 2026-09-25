@@ -1,0 +1,34 @@
+gate: G0
+milestone: Harness in place
+machine_checks:
+  - id: verify-t0-t3
+    description: make verify runs T0, T1, T2, and T3 in order and fails on any failure.
+    command: make verify
+    implements:
+      - Makefile
+      - .github/harness/t0.py
+  - id: codeowners-protected-paths
+    description: >
+      CODEOWNERS blocks a pull request that touches a protected path unless
+      the pull request carries the owner-approved label.
+    command: python3 .github/harness/check_protected_paths.py
+    implements:
+      - .github/CODEOWNERS
+      - .github/harness/check_protected_paths.py
+      - .github/harness/protected_paths.py
+      - .github/workflows/ci.yml
+  - id: holdout-pass-fail-only
+    description: >
+      The holdout job runs private fixtures and reports pass or fail only.
+      When MESA_HOLDOUT_TOKEN is absent it prints "holdout: not configured"
+      and fails. It never passes silently.
+    command: make t3-holdout
+    implements:
+      - .github/harness/holdout.py
+      - .github/workflows/ci.yml
+      - docs/HOLDOUT.md
+human_signoff:
+  - id: holdout-unreadable-by-agent-tokens
+    owner: "@uddeshya-world"
+    requirement: Owner confirms holdout content is not readable by agent tokens.
+    status: pending
