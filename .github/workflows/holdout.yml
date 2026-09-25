@@ -17,6 +17,7 @@ permissions:
 jobs:
   holdout:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     environment: holdout
     steps:
       - name: Resolve candidate ref
@@ -75,6 +76,29 @@ jobs:
             python:3.12-slim@sha256:2f17fc044b579bab302c2e8054d3a686e2cb9a83de48e70534b94cd8ebbe06a9 \
             sh -c 'pip wheel --no-deps /src -w /out' >/dev/null 2>&1
           ls "$out"/*.whl >/dev/null
+          if find "$out" -mindepth 1 ! -type f | grep -q .; then echo "holdout: fail"; exit 1; fi
+
+      - name: Build candidate image (container, no secrets)
+        env:
+          GITHUB_TOKEN: ""
+          GH_TOKEN: ""
+          MESA_HOLDOUT_TOKEN: ""
+        run: |
+          set -euo pipefail
+          work="$RUNNER_TEMP/candidate-image"
+          rm -rf "$work"
+          mkdir -p "$work/wheels" "$RUNNER_TEMP/holdout-outputs"
+          cp -P "$RUNNER_TEMP"/wheels/*.whl "$work/wheels/"
+          cp trusted/.github/harness/holdout_in_container.py "$work/driver.py"
+          cat > "$work/Dockerfile" <<'EOF'
+          FROM python:3.12-slim@sha256:2f17fc044b579bab302c2e8054d3a686e2cb9a83de48e70534b94cd8ebbe06a9
+          COPY wheels/ /wheels/
+          RUN pip install --no-cache-dir /wheels/*.whl && rm -rf /wheels
+          COPY driver.py /opt/mesa-holdout-driver.py
+          ENV PYTHONDONTWRITEBYTECODE=1
+          ENTRYPOINT ["python", "-B", "/opt/mesa-holdout-driver.py"]
+          EOF
+          docker build -t mesa-holdout-candidate "$work"
 
       - name: Clone mesa-holdout
         id: clone
@@ -103,22 +127,6 @@ jobs:
           GH_TOKEN: ""
           MESA_HOLDOUT_TOKEN: ""
         run: |
-          set -euo pipefail
-          work="$RUNNER_TEMP/candidate-image"
-          rm -rf "$work"
-          mkdir -p "$work/wheels" "$RUNNER_TEMP/holdout-outputs"
-          cp "$RUNNER_TEMP"/wheels/*.whl "$work/wheels/"
-          cp trusted/.github/harness/holdout_in_container.py "$work/driver.py"
-          cat > "$work/Dockerfile" <<'EOF'
-          FROM python:3.12-slim@sha256:2f17fc044b579bab302c2e8054d3a686e2cb9a83de48e70534b94cd8ebbe06a9
-          COPY wheels/ /wheels/
-          RUN pip install --no-cache-dir /wheels/*.whl && rm -rf /wheels
-          COPY driver.py /opt/mesa-holdout-driver.py
-          ENV PYTHONDONTWRITEBYTECODE=1
-          ENTRYPOINT ["python", "-B", "/opt/mesa-holdout-driver.py"]
-          EOF
-          # The image pull and build use the host network. The run does not.
-          docker build -t mesa-holdout-candidate "$work"
           docker run --rm --network none --read-only \
             --tmpfs /tmp:rw,nosuid,size=64m \
             -v "$RUNNER_TEMP/holdout/fixtures:/fixtures:ro" \
