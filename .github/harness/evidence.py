@@ -242,6 +242,7 @@ def build(task: str) -> dict[str, object]:
             "tests/test_topology.py",
             "tests/test_topology_pdp_optional.py",
             "tests/test_cli_output.py",
+            "tests/test_runtime_schemas.py",
         ]
     )
     t2 = _run([sys.executable, "-m", "pytest", "-q", "--color=no", "tests/test_properties.py"])
