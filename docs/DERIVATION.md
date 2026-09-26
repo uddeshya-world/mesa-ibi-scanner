@@ -98,7 +98,7 @@ A missing tag never produces a lower guess. The reviewer may lower it in the ove
 | Evidence | Level | Confidence |
 | --- | --- | --- |
 | Resource policy allows a write-class action to `Principal: "*"` with no restricting condition | 3 | derived |
-| Public ingress into the service: API Gateway route with `authorization = NONE`, Lambda function URL with `auth_type = NONE`, SNS topic with a public HTTPS subscription endpoint | 2 | derived |
+| Public ingress into the service: API Gateway (v1 method or v2 route) with authorization `NONE` integrated with the service, or a Lambda function URL with `authorization_type = NONE` | 2 | derived |
 | Write-class access from another account | 2 | derived |
 | Two or more distinct writer principals in-account | 1 | derived |
 | One writer | 0 | derived |
@@ -114,7 +114,7 @@ A missing tag never produces a lower guess. The reviewer may lower it in the ove
 | No egress path | 0 | derived |
 | Agent compute not found in state | 3 | requires-review |
 
-**MCP servers.** An MCP server used by an agent acts with its own credentials. Derive takes the server's P and E from what those credentials can reach (sections 5 and 6) and attributes the edges to the using agent, with the server named in provenance. A tool description such as "read-only" is a hint. If it disagrees with the credentials, derive keeps the credential-derived edges and adds a `description-mismatch` review item (scenario SC-08).
+**MCP servers.** An MCP server used by an agent acts with its own credentials. Derive takes the server's edges from what those credentials can reach (sections 5 and 6) and attributes them to the using agent, with the server named in provenance. The server is assumed to run beside the agent, so its egress is the agent's egress. A tool description such as "read-only" is a hint. If it disagrees with the credentials, derive keeps the credential-derived edges and adds a `description-mismatch` review item (scenario SC-08).
 
 An MCP server whose credentials are not bound in config or `mesa-agents.yaml` gets `P=3, E=3` with `requires-review`.
 
@@ -137,7 +137,7 @@ Every emitted fact carries:
  "source": "iam:role/agent-a#policy/cache-rw#Statement[0]"}
 ```
 
-Source pointer forms: `iam:<principal-type>/<name>#policy/<name>#Statement[<i>]`, `tfstate:<address>#<attribute>`, `mcp:<server>#<field>`, `egress:<file>#<line>`, `overlay:<id>`.
+Source pointer forms: `iam:<principal-type>/<name>#policy/<name>#Statement[<i>]`, `tfstate:<address>#<attribute>`, `mcp:<server>#<field>`, `egress:domains[<i>]`, `rule:<name>` for a documented default, `overlay:<id>`. Pointers never contain file-system paths, so output does not depend on where the inputs live.
 
 The overlay is a list of corrections keyed by fact identity (`fact`, `src`, `dst`, `flow_type` for edges; `vertex`, `dimension` for levels). Each correction names a reviewer and a reason. On regeneration:
 
