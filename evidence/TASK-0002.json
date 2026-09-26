@@ -10,12 +10,12 @@
     {
       "id": "T1",
       "result": "pass",
-      "cases": 12
+      "cases": 38
     },
     {
       "id": "T2",
       "result": "pass",
-      "cases": 5,
+      "cases": 18,
       "seed": [
         0,
         1,
@@ -25,19 +25,34 @@
       ]
     },
     {
+      "id": "T2-lattice",
+      "result": "pass",
+      "cases": 10000,
+      "seed": 7
+    },
+    {
       "id": "T3",
       "result": "pass",
-      "cases": 10
+      "cases": 101
     }
   ],
   "golden": {
-    "public": "10/10",
+    "public": "101/101",
     "holdout": {
       "result": "see-status",
       "status_context": "holdout"
     }
   },
-  "benchmarks": [],
+  "benchmarks": [
+    {
+      "id": "B-01",
+      "result": "pass",
+      "target_s": 30.0,
+      "agents": 1000,
+      "services": 200,
+      "edges": 6000
+    }
+  ],
   "mutation_score": null,
   "protected_paths_changed": [
     "gates/g2.yaml",
@@ -49,6 +64,7 @@
     "ruff": "0.16.9",
     "mypy": "2.3.1",
     "hypothesis": "none",
+    "cryptography": "50.0.1",
     "jev": "none"
   },
   "reproduce": "make evidence TASK=TASK-0002"
