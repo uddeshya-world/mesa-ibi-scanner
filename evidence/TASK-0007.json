@@ -147,7 +147,6 @@
     "fixtures/lattice/v01-off_inventory_vacuous-regulated.json",
     "fixtures/lattice/v01-off_inventory_vacuous-research.json",
     "fixtures/lattice/v01-off_inventory_vacuous-staging.json",
-    "gates/g6.yaml",
     "gates/g7.yaml",
     "mesa_ibi_scanner/data/mesa-frontier.schema.json",
     "mesa_ibi_scanner/data/mesa-topology-v0.2.schema.json",
@@ -157,13 +156,11 @@
     "schemas/examples/topology-lattice-multihop.json",
     "schemas/v0.2/mesa-frontier.schema.json",
     "schemas/v0.2/mesa-topology.schema.json",
-    "tasks/TASK-0006.md",
     "tasks/TASK-0007.md",
     "tests/lattice_reference.py",
     "tests/test_lattice_golden.py",
     "tests/test_lattice_properties.py",
-    "tests/test_lattice_unit.py",
-    "thresholds/zones.json"
+    "tests/test_lattice_unit.py"
   ],
   "tool_versions": {
     "python": "3.12.3",
