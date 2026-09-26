@@ -21,7 +21,7 @@ t1:
 	$(PYTHON) -m pytest -q --color=no tests/test_topology.py tests/test_topology_pdp_optional.py tests/test_cli_output.py
 
 t2:
-	$(PYTHON) -m pytest -q --color=no tests/test_properties.py
+	$(PYTHON) -m pytest -q --color=no tests/test_properties.py tests/test_advisory.py
 
 t3:
 	$(PYTHON) -m pytest -q --color=no tests/test_closure.py

@@ -244,7 +244,7 @@ def build(task: str) -> dict[str, object]:
             "tests/test_cli_output.py",
         ]
     )
-    t2 = _run([sys.executable, "-m", "pytest", "-q", "--color=no", "tests/test_properties.py"])
+    t2 = _run([sys.executable, "-m", "pytest", "-q", "--color=no", "tests/test_properties.py", "tests/test_advisory.py"])
     t3 = _run([sys.executable, "-m", "pytest", "-q", "--color=no", "tests/test_closure.py"])
     t1_result, _t1_passed, t1_total = _pytest_summary(t1.stdout + t1.stderr, t1.returncode)
     t2_result, _t2_passed, t2_total = _pytest_summary(t2.stdout + t2.stderr, t2.returncode)
