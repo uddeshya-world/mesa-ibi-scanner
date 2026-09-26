@@ -1,0 +1,72 @@
+{
+  "task": "TASK-0010",
+  "commit": "051052f7c1f78cbe70b531275cdb46647bab8302",
+  "gate": "G8",
+  "checks": [
+    {
+      "id": "T0",
+      "result": "pass"
+    },
+    {
+      "id": "T1",
+      "result": "pass",
+      "cases": 38
+    },
+    {
+      "id": "T2",
+      "result": "pass",
+      "cases": 18,
+      "seed": [
+        0,
+        1,
+        2,
+        3,
+        42
+      ]
+    },
+    {
+      "id": "T2-lattice",
+      "result": "pass",
+      "cases": 10000,
+      "seed": 7
+    },
+    {
+      "id": "T3",
+      "result": "pass",
+      "cases": 101
+    }
+  ],
+  "golden": {
+    "public": "101/101",
+    "holdout": {
+      "result": "see-status",
+      "status_context": "holdout"
+    }
+  },
+  "benchmarks": [
+    {
+      "id": "B-01",
+      "result": "pass",
+      "target_s": 30.0,
+      "agents": 1000,
+      "services": 200,
+      "edges": 6000
+    }
+  ],
+  "mutation_score": null,
+  "protected_paths_changed": [
+    "gates/g8.yaml",
+    "gates/g9.yaml",
+    "tasks/TASK-0010.md"
+  ],
+  "tool_versions": {
+    "python": "3.12.3",
+    "pytest": "9.1.1",
+    "ruff": "0.16.9",
+    "mypy": "2.3.1",
+    "hypothesis": "none",
+    "cryptography": "50.0.1",
+    "jev": "none"
+  },
+  "reproduce": "make evidence TASK=TASK-0010"
+}

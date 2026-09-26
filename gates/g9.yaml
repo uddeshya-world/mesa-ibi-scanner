@@ -1,0 +1,20 @@
+gate: G9
+milestone: Base-rate findings
+status: pre-registered, pending owner approval
+analysis: docs/BASERATE.md section 7
+primary_outcome: BR-1
+interval: wilson-95
+framing_rule:
+  common: "lower bound of BR-1 >= 0.2"
+  uncommon: "upper bound of BR-1 < 0.2"
+  otherwise: inconclusive
+accuracy_sample: {size: 10, seed: 20261002, metrics: [T4-edge-precision, T4-edge-recall, T4-shared-service-recall]}
+machine_checks:
+  - id: intervals-reported
+  - id: negative-cases-section
+  - id: accuracy-on-sample
+human_signoff:
+  - id: framing
+    owner: "@uddeshya-world"
+    requirement: Owner approves framing of the findings note
+    status: pending
