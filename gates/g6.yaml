@@ -1,0 +1,34 @@
+gate: G6
+milestone: Lattice spec
+status: pre-registered, pending owner approval
+# Pre-registration (VALIDATION.md rule 5). Committed before any measurement.
+fp_metric:
+  id: G7-FP-reduction
+  estates: three estates derived by mesa-ibi-derive (reference environments or owner estates)
+  labels: >
+    The owner labels every agent that the boolean model flags as a true
+    positive (a real P-U-E composition worth a finding in its zone) or a false
+    positive. Labels are recorded before the lattice verdicts are computed.
+  definition: >
+    reduction = 1 - (lattice false positives / boolean false positives), over
+    the owner-labelled boolean findings on each estate.
+  targets:
+    reduction_per_estate: 0.5     # at least half of boolean false positives cleared
+    true_positive_retention: 1.0  # every owner-labelled true positive still flagged
+  comparison: ">="
+  estates_required_passing: 3
+  ceiling_for_kill_criterion: >
+    If after G7 and one round of flow-typing fixes the lattice false-positive
+    share of findings stays above 0.5 on real estates, MESA stays a research
+    artifact (roadmap Section 14).
+thresholds_file: thresholds/zones.json
+machine_checks:
+  - id: migration-map-covers-v01
+    description: Every v0.1 fixture keeps its verdict after auto-promotion (P-05, TASK-0007)
+  - id: preregistered-before-run
+    command: git log --diff-filter=A --format=%cI -- gates/g6.yaml thresholds/zones.json
+human_signoff:
+  - id: thresholds-per-zone
+    owner: "@uddeshya-world"
+    requirement: Owner approves thresholds per zone
+    status: pending
