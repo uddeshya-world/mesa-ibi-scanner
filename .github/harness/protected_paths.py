@@ -14,6 +14,9 @@ from pathlib import Path
 
 REQUIRED_PATTERNS: tuple[str, ...] = (
     "/mesa_ibi_scanner/fixtures.py",
+    "/fixtures/",
+    "/mesa_ibi_scanner/data/",
+    "/benchmarks/",
     "/tests/",
     "/schemas/",
     "/gates/",
@@ -150,6 +153,9 @@ def assert_codeowners_contract() -> None:
         ("/.github/", ".github/workflows/ci.yml"),
         ("/.github/", ".github/CODEOWNERS"),
         ("/mesa_ibi_scanner/fixtures.py", "mesa_ibi_scanner/fixtures.py"),
+        ("/fixtures/", "fixtures/lattice/boundary-production-at.json"),
+        ("/mesa_ibi_scanner/data/", "mesa_ibi_scanner/data/zones.json"),
+        ("/benchmarks/", "benchmarks/b01_batch_closure.py"),
         ("/schemas/", "schemas/v0.1/mesa-topology.schema.json"),
         ("/schemas/", "schemas/examples/topology-hf-like.json"),
         ("/gates/", "gates/g0.yaml"),

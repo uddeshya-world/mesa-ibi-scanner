@@ -1,0 +1,12 @@
+gate: G10
+milestone: Temporal closure (cuttable)
+machine_checks:
+  - id: p08
+    command: make t2
+  - id: sc03-sc10
+    command: make t3
+human_signoff:
+  - id: formal-definition
+    owner: "@uddeshya-world"
+    requirement: Owner approves the formal definition in docs/TEMPORAL.md
+    status: pending

@@ -1,0 +1,81 @@
+{
+  "task": "TASK-0008",
+  "commit": "85675cd1d9c005338e7fefe341405b32ae94282c",
+  "gate": "G10",
+  "checks": [
+    {
+      "id": "T0",
+      "result": "pass"
+    },
+    {
+      "id": "T1",
+      "result": "pass",
+      "cases": 38
+    },
+    {
+      "id": "T2",
+      "result": "pass",
+      "cases": 18,
+      "seed": [
+        0,
+        1,
+        2,
+        3,
+        42
+      ]
+    },
+    {
+      "id": "T2-lattice",
+      "result": "pass",
+      "cases": 10000,
+      "seed": 7
+    },
+    {
+      "id": "T3",
+      "result": "pass",
+      "cases": 101
+    }
+  ],
+  "golden": {
+    "public": "101/101",
+    "holdout": {
+      "result": "see-status",
+      "status_context": "holdout"
+    }
+  },
+  "benchmarks": [
+    {
+      "id": "B-01",
+      "result": "pass",
+      "target_s": 30.0,
+      "agents": 1000,
+      "services": 200,
+      "edges": 6000
+    }
+  ],
+  "mutation_score": null,
+  "protected_paths_changed": [
+    "Makefile",
+    "fixtures/temporal/sc-03-durable.json",
+    "fixtures/temporal/sc-03-stateless.json",
+    "fixtures/temporal/sc-10-attested.json",
+    "fixtures/temporal/sc-10-unattested.json",
+    "gates/g10.yaml",
+    "mesa_ibi_scanner/data/mesa-timeline.schema.json",
+    "schemas/v0.2/mesa-timeline.schema.json",
+    "tasks/TASK-0008.md",
+    "tests/test_temporal.py",
+    "tests/test_temporal_golden.py",
+    "tests/test_temporal_properties.py"
+  ],
+  "tool_versions": {
+    "python": "3.12.3",
+    "pytest": "9.1.1",
+    "ruff": "0.16.9",
+    "mypy": "2.3.1",
+    "hypothesis": "none",
+    "cryptography": "50.0.1",
+    "jev": "none"
+  },
+  "reproduce": "make evidence TASK=TASK-0008"
+}

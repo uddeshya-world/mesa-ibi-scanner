@@ -1,0 +1,48 @@
+{
+  "edges": [
+    {
+      "dst": "agent:b",
+      "flow_type": "read",
+      "pdp_gate": false,
+      "src": "svc:s"
+    },
+    {
+      "dst": "agent:a",
+      "flow_type": "write",
+      "pdp_gate": false,
+      "src": "agent:b"
+    }
+  ],
+  "topology_version": "0.2.0",
+  "vertices": [
+    {
+      "id": "svc:s",
+      "kind": "service",
+      "levels": {
+        "E": 3,
+        "P": 3,
+        "U": 3
+      }
+    },
+    {
+      "id": "agent:b",
+      "kind": "agent",
+      "levels": {
+        "E": 0,
+        "P": 0,
+        "U": 0
+      },
+      "zone": "research"
+    },
+    {
+      "id": "agent:a",
+      "kind": "agent",
+      "levels": {
+        "E": 3,
+        "P": 0,
+        "U": 0
+      },
+      "zone": "production"
+    }
+  ]
+}
