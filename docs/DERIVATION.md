@@ -13,15 +13,32 @@ Two design rules drive every mapping below:
 
 | Input | Expected form | Flag |
 | --- | --- | --- |
-| Terraform state | `terraform show -json` output (`values.root_module`, child modules walked) | `--tfstate` |
+| Terraform state or plan | `terraform show -json` output of a state (`values.root_module`) or of a plan file (`planned_values.root_module` with `configuration`); child modules walked | `--tfstate` (`tfstate.json` or `tfplan.json` in `--dir`) |
 | IAM authorization export | `aws iam get-account-authorization-details` JSON | `--iam` |
 | Cartography or PMapper export | Edge list JSON (principal, action, resource) | `--graph-import` |
 | MCP configuration | `mcpServers` map as used by MCP clients, plus an optional credential binding | `--mcp` |
 | Egress allowlist | Plain list of domains, or YAML with `domains:` and optional `method_safe:` per domain | `--egress` |
-| Agent declarations | ACM documents (`schemas/v0.1/mesa-acm.schema.json`) or a `mesa-agents.yaml` binding | `--agents` |
+| Agent declarations | `mesa-agents.yaml`: principals per agent (role ARNs, or `tf:<address>` when the ARN is unknown at plan time), MCP servers and bindings, zone, memory window. Reading ACM documents directly is **not implemented** yet | `--agents` |
 | Human overlay | `overlay.yaml` of reviewed corrections (section 8) | `--overlay` |
 
 Derive makes no network calls. It reads files on the machine where it runs.
+
+### 1.1 IAM declared in Terraform
+
+Public modules have no IAM export. Derive also reads grants from Terraform: `aws_iam_role` (including `inline_policy` blocks), `aws_iam_role_policy`, `aws_iam_policy`, `aws_iam_role_policy_attachment`, and `data.aws_iam_policy_document`. These are merged with an IAM export when both are present. Pointers: `tfstate:<address>#policy#Statement[<i>]`, `tfstate:<address>#inline_policy[<j>]#Statement[<i>]`.
+
+### 1.2 Plan JSON and unknown values
+
+In a plan, ARNs and rendered policies are often unknown. Derive resolves them through `configuration` references:
+
+- A policy document statement whose `resources` reference a resource becomes a `tfref:<address>` resource. It matches the service with that Terraform address, with confidence `inferred`. Pointer: `tfconfig:<document address>#statement[<i>]`. References to `var.` or `local.` that cannot be resolved become `*` (over-inclusion).
+- A compute resource's role (`role`, `task_role_arn`) is resolved from its reference when the ARN is unknown.
+- A service whose ARN is unknown gets a synthetic ARN with wildcard region and account (for example `arn:aws:sqs:*:*:jobs`). A statement naming the concrete ARN matches it, with confidence `inferred`.
+- A role whose name is unknown is keyed `tf:<address>`. `mesa-agents.yaml` may name principals that way.
+
+### 1.3 Output versions
+
+`--topology-version 0.1.0` (default) writes boolean `w`. `0.2.0` writes graded levels, zone and memory window (docs/LATTICE.md, docs/TEMPORAL.md). A missing zone becomes `production` and a missing memory declaration becomes `unbounded`, each with a review item (docs/NEVER_DERIVABLE.md).
 
 ## 2. Confidence classes
 
