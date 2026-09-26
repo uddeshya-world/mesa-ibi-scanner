@@ -82,7 +82,8 @@ class LEdge:
         return attenuate(c, self.cap) if self.cap is not None else c
 
     def key(self) -> tuple[Any, ...]:
-        return (self.src, self.dst, self.flow_type, self.pdp_gate, self.cap or TOP, self.label)
+        # An explicit cap equal to TOP is a different edge from no cap: keep them distinct so order is total.
+        return (self.src, self.dst, self.flow_type, self.pdp_gate, self.cap is not None, self.cap or TOP, self.label)
 
     def ref(self) -> dict[str, Any]:
         out: dict[str, Any] = {"src": self.src, "dst": self.dst, "flow_type": self.flow_type}
