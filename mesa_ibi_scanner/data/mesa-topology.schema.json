@@ -1,0 +1,119 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/uddeshya-world/mesa-ibi-scanner/v0.3.0/schemas/v0.1/mesa-topology.schema.json",
+  "title": "MESA Estate Topology (v0.1)",
+  "description": "Typed agent/service interaction graph for MESA-INV-01 Cl(b) evaluation. Research prototype \u2014 not a production estate inventory format.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "vertices",
+    "edges"
+  ],
+  "properties": {
+    "topology_version": {
+      "type": "string",
+      "description": "Optional document version for this topology file.",
+      "const": "0.1.0"
+    },
+    "vertices": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/vertex"
+      }
+    },
+    "edges": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/edge"
+      }
+    }
+  },
+  "$defs": {
+    "property_vector": {
+      "type": "array",
+      "description": "(private_data, untrusted_content, external_communication) as 0/1 integers.",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "integer",
+        "enum": [
+          0,
+          1
+        ]
+      }
+    },
+    "vertex": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "w"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Stable vertex identifier."
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "agent",
+            "service"
+          ]
+        },
+        "w": {
+          "$ref": "#/$defs/property_vector"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "edge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "src",
+        "dst",
+        "flow_type"
+      ],
+      "properties": {
+        "src": {
+          "type": "string",
+          "minLength": 1
+        },
+        "dst": {
+          "type": "string",
+          "minLength": 1
+        },
+        "flow_type": {
+          "type": "string",
+          "enum": [
+            "write",
+            "goal-message",
+            "proxy/egress",
+            "identity-mint",
+            "read"
+          ],
+          "description": "Selects the illustrative flow mask used by the Cl(b) fixpoint."
+        },
+        "pdp_gate": {
+          "type": "boolean",
+          "description": "If true, edge is removed under cut semantics (residual graph). Optional; defaults to false (matches Edge dataclass).",
+          "default": false
+        },
+        "label": {
+          "type": "string",
+          "description": "Optional human-readable edge label."
+        }
+      }
+    }
+  }
+}

@@ -1,3 +1,19 @@
+## 0.4.0 — 2026-09-26
+
+### Added (graded lattice, TASK-0007, docs/LATTICE.md)
+- `mesa_ibi_scanner.lattice`: four-level P/U/E closure with flow caps, per-edge caps (scoped OBO tokens), zone thresholds from the protected `thresholds/zones.json`, INV01 and NEAR_MISS findings, witness paths, minimal cuts, `IncrementalClosure`.
+- Closure frontier export (`--frontier-out`) with a content-derived `frontier_version` and optional Ed25519 signature (`--sign-key`, extra `sign`).
+- Schema v0.2 (`schemas/v0.2/mesa-topology.schema.json`) and frontier schema; v0.1 documents are auto-promoted (bit 1 -> level 3).
+- `--lattice` flag; v0.2 input selects lattice mode automatically. SARIF adds `MESA-INV-01-NEAR-MISS` warnings.
+- Temporal closure behind `--timeline` (docs/TEMPORAL.md, TASK-0008): per-agent memory window W; only attested wipes reset; P-08, SC-03, SC-10.
+- 84 lattice golden fixtures, property tests P-01 to P-05, P-07, P-10 to P-12 at 10,000 cases, B-01 benchmark.
+
+### Fixed
+- Schemas and thresholds are packaged under `mesa_ibi_scanner/data/`, so a non-editable install can validate `--input` (v0.3.2 could not find its schema outside a checkout).
+
+### Unchanged
+- v0.1 output for v0.1 input without `--lattice`. All 27 v0.1 tests are unmodified.
+
 ## 0.3.2 — 2026-09-16
 
 ### Performance
