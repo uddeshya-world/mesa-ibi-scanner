@@ -1,0 +1,61 @@
+gate: G2
+milestone: Derivation spec
+status: pre-registered, pending owner approval
+# Pre-registration (VALIDATION.md rule 5). These targets are committed before
+# any derivation run. A target changed after a run invalidates that run.
+# Values are the roadmap Section 9 initial targets; the owner confirms or
+# replaces them before G2 sign-off.
+t4_metrics:
+  - id: T4-shared-service-recall
+    definition: >
+      Of services a hand-verifier marks blackboard-capable in a reference
+      environment, the fraction derive also tags blackboard-capable.
+    target: 1.0
+    comparison: ">="
+    release_blocking: true
+  - id: T4-edge-precision
+    definition: >
+      Of edges derive emits (any confidence), the fraction present in the
+      hand-verified topology with the same src, dst and flow_type.
+    target: 0.80
+    comparison: ">="
+  - id: T4-edge-recall
+    definition: >
+      Of edges in the hand-verified topology, the fraction derive emits with
+      the same src, dst and flow_type.
+    target: 0.95
+    comparison: ">="
+  - id: T4-level-agreement
+    definition: >
+      Over every (vertex, dimension) pair in the hand-verified topology, the
+      fraction where derive's level equals the hand label. Every disagreement
+      is listed with an explanation in the T4 report.
+    target: 0.85
+    comparison: ">="
+  - id: T4-requires-review-share
+    definition: Fraction of emitted facts with confidence requires-review.
+    target: null
+    comparison: report-only
+matching:
+  vertex_identity: exact vertex id after derive's id normalisation (docs/DERIVATION.md section 3)
+  edge_identity: (src, dst, flow_type); pdp_gate and label ignored
+  confidence_counted: all classes count toward precision and recall
+machine_checks:
+  - id: hand-derived-topology-validates
+    description: The owner's hand-derived topology validates against schemas/v0.1 and scans.
+    command: mesa-ibi-scan --input <hand-derived>.json --format json
+  - id: t4-preregistered
+    description: This file's first commit precedes the first derive run on any reference environment.
+    command: git log --diff-filter=A --format=%cI -- gates/g2.yaml
+human_signoff:
+  - id: owner-defends-findings
+    owner: "@uddeshya-world"
+    requirement: Owner defends each finding of the hand-derived topology line by line.
+    status: pending
+  - id: owner-timed-hand-derivation
+    owner: "@uddeshya-world"
+    requirement: >
+      Owner records hand-derivation time and hand-authoring time in
+      docs/G2_SPIKE.md. If derivation takes longer than authoring, the
+      Section 14 kill criterion applies.
+    status: pending
