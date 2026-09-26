@@ -1,0 +1,5 @@
+{
+  "ledger_version": "0.1.0",
+  "note": "Every number in a MESA paper, README, crosswalk or pitch has a row here. Rows are added by humans after a reproducible run; status moves to reproduced when CI re-runs it at the recorded commit.",
+  "claims": []
+}

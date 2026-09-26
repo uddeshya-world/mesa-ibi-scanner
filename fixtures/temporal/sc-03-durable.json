@@ -1,0 +1,114 @@
+{
+  "description": "SC-03: P at step 1, E at step 2, durable memory; static passes, temporal INV01 at step 2",
+  "expected": {
+    "static_violations_by_step": [
+      [],
+      []
+    ],
+    "temporal_violations_by_step": [
+      [],
+      [
+        "agent:a"
+      ]
+    ]
+  },
+  "id": "sc-03-durable",
+  "timeline": {
+    "steps": [
+      {
+        "t": 1,
+        "topology": {
+          "edges": [
+            {
+              "dst": "agent:a",
+              "flow_type": "read",
+              "src": "svc:regulated"
+            },
+            {
+              "dst": "agent:a",
+              "flow_type": "read",
+              "src": "svc:tickets"
+            }
+          ],
+          "topology_version": "0.2.0",
+          "vertices": [
+            {
+              "id": "agent:a",
+              "kind": "agent",
+              "levels": {
+                "E": 0,
+                "P": 0,
+                "U": 0
+              },
+              "memory_window": "unbounded",
+              "zone": "production"
+            },
+            {
+              "id": "svc:regulated",
+              "kind": "service",
+              "levels": {
+                "E": 0,
+                "P": 3,
+                "U": 0
+              }
+            },
+            {
+              "id": "svc:tickets",
+              "kind": "service",
+              "levels": {
+                "E": 0,
+                "P": 0,
+                "U": 2
+              }
+            }
+          ]
+        }
+      },
+      {
+        "t": 2,
+        "topology": {
+          "edges": [
+            {
+              "dst": "agent:a",
+              "flow_type": "read",
+              "src": "svc:tickets"
+            }
+          ],
+          "topology_version": "0.2.0",
+          "vertices": [
+            {
+              "id": "agent:a",
+              "kind": "agent",
+              "levels": {
+                "E": 3,
+                "P": 0,
+                "U": 0
+              },
+              "memory_window": "unbounded",
+              "zone": "production"
+            },
+            {
+              "id": "svc:regulated",
+              "kind": "service",
+              "levels": {
+                "E": 0,
+                "P": 3,
+                "U": 0
+              }
+            },
+            {
+              "id": "svc:tickets",
+              "kind": "service",
+              "levels": {
+                "E": 0,
+                "P": 0,
+                "U": 2
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "timeline_version": "0.1.0"
+  }
+}

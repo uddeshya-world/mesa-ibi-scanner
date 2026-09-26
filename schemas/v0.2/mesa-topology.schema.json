@@ -1,0 +1,155 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/uddeshya-world/mesa-ibi-scanner/v0.4.0/schemas/v0.2/mesa-topology.schema.json",
+  "title": "MESA Estate Topology (v0.2, graded lattice)",
+  "description": "Typed agent/service interaction graph with graded P/U/E levels (docs/LATTICE.md). Research prototype. Zone thresholds are not part of the document: they come from the scanner's protected thresholds file.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "topology_version",
+    "vertices",
+    "edges"
+  ],
+  "properties": {
+    "topology_version": {
+      "type": "string",
+      "const": "0.2.0"
+    },
+    "vertices": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/vertex"
+      }
+    },
+    "edges": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/edge"
+      }
+    }
+  },
+  "$defs": {
+    "levels": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "P",
+        "U",
+        "E"
+      ],
+      "properties": {
+        "P": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3
+        },
+        "U": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3
+        },
+        "E": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3
+        }
+      }
+    },
+    "vertex": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "levels"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "agent",
+            "service"
+          ]
+        },
+        "levels": {
+          "$ref": "#/$defs/levels"
+        },
+        "zone": {
+          "type": "string",
+          "enum": [
+            "research",
+            "staging",
+            "production",
+            "regulated"
+          ],
+          "description": "Default production."
+        },
+        "memory_window": {
+          "type": "string",
+          "enum": [
+            "1",
+            "session",
+            "unbounded"
+          ],
+          "description": "Temporal closure window W. Default 1 (stateless)."
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "provenance": {
+          "type": "object",
+          "description": "Free-form pointers from mesa-ibi-derive facts."
+        }
+      }
+    },
+    "edge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "src",
+        "dst",
+        "flow_type"
+      ],
+      "properties": {
+        "src": {
+          "type": "string",
+          "minLength": 1
+        },
+        "dst": {
+          "type": "string",
+          "minLength": 1
+        },
+        "flow_type": {
+          "type": "string",
+          "enum": [
+            "write",
+            "goal-message",
+            "proxy/egress",
+            "identity-mint",
+            "read"
+          ]
+        },
+        "pdp_gate": {
+          "type": "boolean",
+          "default": false
+        },
+        "cap": {
+          "$ref": "#/$defs/levels",
+          "description": "Optional per-edge cap, for example a scoped on-behalf-of token (SC-09)."
+        },
+        "label": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

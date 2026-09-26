@@ -1,0 +1,110 @@
+{
+  "description": "SC-10 control: attested wipe resets memory",
+  "expected": {
+    "temporal_near_miss_by_step": [
+      [
+        "agent:a"
+      ],
+      []
+    ],
+    "temporal_violations_by_step": [
+      [],
+      []
+    ]
+  },
+  "id": "sc-10-attested",
+  "timeline": {
+    "steps": [
+      {
+        "t": 1,
+        "topology": {
+          "edges": [
+            {
+              "dst": "agent:a",
+              "flow_type": "read",
+              "src": "svc:regulated"
+            }
+          ],
+          "topology_version": "0.2.0",
+          "vertices": [
+            {
+              "id": "agent:a",
+              "kind": "agent",
+              "levels": {
+                "E": 2,
+                "P": 0,
+                "U": 0
+              },
+              "memory_window": "unbounded",
+              "zone": "production"
+            },
+            {
+              "id": "svc:regulated",
+              "kind": "service",
+              "levels": {
+                "E": 0,
+                "P": 3,
+                "U": 0
+              }
+            },
+            {
+              "id": "svc:tickets",
+              "kind": "service",
+              "levels": {
+                "E": 0,
+                "P": 0,
+                "U": 2
+              }
+            }
+          ]
+        }
+      },
+      {
+        "t": 2,
+        "topology": {
+          "edges": [],
+          "topology_version": "0.2.0",
+          "vertices": [
+            {
+              "id": "agent:a",
+              "kind": "agent",
+              "levels": {
+                "E": 2,
+                "P": 0,
+                "U": 0
+              },
+              "memory_window": "unbounded",
+              "zone": "production"
+            },
+            {
+              "id": "svc:regulated",
+              "kind": "service",
+              "levels": {
+                "E": 0,
+                "P": 3,
+                "U": 0
+              }
+            },
+            {
+              "id": "svc:tickets",
+              "kind": "service",
+              "levels": {
+                "E": 0,
+                "P": 0,
+                "U": 2
+              }
+            }
+          ]
+        },
+        "wipes": [
+          {
+            "agent": "agent:a",
+            "attested": true,
+            "source": "k8s:pvc/agent-a-memory#deleted"
+          }
+        ]
+      }
+    ],
+    "timeline_version": "0.1.0"
+  }
+}

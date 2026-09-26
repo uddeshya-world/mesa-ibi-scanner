@@ -226,26 +226,40 @@ def _check(check_id: str, result: str, cases: int | None = None, seed: object = 
     return item
 
 
+def _tier_files() -> dict[str, list[str]]:
+    """Test files per tier, read from the Makefile (the same source T0 checks)."""
+    tiers: dict[str, list[str]] = {"t1": [], "t2": [], "t3": []}
+    current: str | None = None
+    for line in (ROOT / "Makefile").read_text(encoding="utf-8").splitlines():
+        if not line.startswith("\t"):
+            current = next((t for t in tiers if line.startswith(f"{t}:")), None)
+            continue
+        if current:
+            tiers[current].extend(re.findall(r"tests/test_[A-Za-z0-9_]+\.py", line))
+    return tiers
+
+
+def _benchmark() -> dict[str, object]:
+    proc = _run([sys.executable, "benchmarks/b01_batch_closure.py"])
+    try:
+        data = json.loads(proc.stdout.strip().splitlines()[-1])
+    except (IndexError, json.JSONDecodeError):
+        return {"id": "B-01", "result": "fail", "target_s": 30.0}
+    # Timings vary by machine; the bundle records the verdict so CI can byte-diff it.
+    return {"id": "B-01", "result": data.get("result", "fail"), "target_s": data.get("target_s", 30.0),
+            "agents": data.get("agents"), "services": data.get("services"), "edges": data.get("edges")}
+
+
 def build(task: str) -> dict[str, object]:
     if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]*", task):
         raise SystemExit("evidence: TASK id contains unsupported characters")
     _ensure_worktree(task)
     gate = _gate(task)
     t0 = _run([sys.executable, ".github/harness/t0.py"])
-    t1 = _run(
-        [
-            sys.executable,
-            "-m",
-            "pytest",
-            "-q",
-            "--color=no",
-            "tests/test_topology.py",
-            "tests/test_topology_pdp_optional.py",
-            "tests/test_cli_output.py",
-        ]
-    )
-    t2 = _run([sys.executable, "-m", "pytest", "-q", "--color=no", "tests/test_properties.py", "tests/test_advisory.py"])
-    t3 = _run([sys.executable, "-m", "pytest", "-q", "--color=no", "tests/test_closure.py"])
+    tiers = _tier_files()
+    t1 = _run([sys.executable, "-m", "pytest", "-q", "--color=no", *tiers["t1"]])
+    t2 = _run([sys.executable, "-m", "pytest", "-q", "--color=no", *tiers["t2"]])
+    t3 = _run([sys.executable, "-m", "pytest", "-q", "--color=no", *tiers["t3"]])
     t1_result, _t1_passed, t1_total = _pytest_summary(t1.stdout + t1.stderr, t1.returncode)
     t2_result, _t2_passed, t2_total = _pytest_summary(t2.stdout + t2.stderr, t2.returncode)
     t3_result, t3_passed, t3_total = _pytest_summary(t3.stdout + t3.stderr, t3.returncode)
@@ -253,6 +267,7 @@ def build(task: str) -> dict[str, object]:
         _check("T0", "pass" if t0.returncode == 0 else "fail"),
         _check("T1", t1_result, cases=t1_total),
         _check("T2", t2_result, cases=t2_total, seed=_property_seeds()),
+        _check("T2-lattice", t2_result, cases=int(os.environ.get("MESA_T2_CASES", "10000")), seed=7),
         _check("T3", t3_result, cases=t3_total),
     ]
     for proc, label in ((t0, "T0"), (t1, "T1"), (t2, "T2"), (t3, "T3")):
@@ -270,7 +285,7 @@ def build(task: str) -> dict[str, object]:
             "public": public,
             "holdout": {"result": "see-status", "status_context": "holdout"},
         },
-        "benchmarks": [],
+        "benchmarks": [_benchmark()] if (ROOT / "benchmarks" / "b01_batch_closure.py").is_file() else [],
         "mutation_score": None,
         "protected_paths_changed": protected_changes(),
         "tool_versions": {
@@ -279,6 +294,7 @@ def build(task: str) -> dict[str, object]:
             "ruff": _tool_version("ruff"),
             "mypy": _tool_version("mypy"),
             "hypothesis": _tool_version("hypothesis"),
+            "cryptography": _tool_version("cryptography"),
             "jev": "none",
         },
         "reproduce": f"make evidence TASK={task}",
@@ -291,7 +307,7 @@ def write(task: str, payload: dict[str, object]) -> Path:
     target.parent.mkdir(parents=True, exist_ok=True)
     text = json.dumps(payload, indent=2) + "\n"
     temporary = target.with_suffix(".json.tmp")
-    temporary.write_text(text, encoding="utf-8")
+    temporary.write_bytes(text.encode("utf-8"))  # LF on every platform; CI byte-diffs this file
     temporary.replace(target)
     return target
 

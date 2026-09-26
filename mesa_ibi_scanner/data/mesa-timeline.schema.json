@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/uddeshya-world/mesa-ibi-scanner/v0.4.0/schemas/v0.2/mesa-timeline.schema.json",
+  "title": "MESA timeline (temporal closure input)",
+  "description": "Ordered snapshots with sessions and memory wipes (docs/TEMPORAL.md). Each topology is validated separately.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "timeline_version",
+    "steps"
+  ],
+  "properties": {
+    "timeline_version": {
+      "const": "0.1.0"
+    },
+    "steps": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "topology"
+        ],
+        "properties": {
+          "t": {
+            "type": [
+              "integer",
+              "string"
+            ]
+          },
+          "topology": {
+            "type": "object"
+          },
+          "sessions": {
+            "type": "object",
+            "additionalProperties": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "wipes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "agent",
+                "attested"
+              ],
+              "properties": {
+                "agent": {
+                  "type": "string"
+                },
+                "attested": {
+                  "type": "boolean"
+                },
+                "source": {
+                  "type": "string",
+                  "description": "Infrastructure evidence for an attested wipe, or the claim's origin."
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

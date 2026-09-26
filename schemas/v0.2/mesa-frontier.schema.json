@@ -1,0 +1,171 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/uddeshya-world/mesa-ibi-scanner/v0.4.0/schemas/v0.2/mesa-frontier.schema.json",
+  "title": "MESA closure frontier",
+  "description": "Per-agent closure frontier for an enforcement point (docs/LATTICE.md section 7).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "frontier_schema",
+    "frontier_version",
+    "thresholds",
+    "flow_caps",
+    "agents",
+    "surfaces"
+  ],
+  "properties": {
+    "frontier_schema": {
+      "const": "mesa-frontier/0.1"
+    },
+    "frontier_version": {
+      "type": "string",
+      "pattern": "^f-[0-9a-f]{16}$"
+    },
+    "thresholds": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/levels"
+      }
+    },
+    "flow_caps": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/levels"
+      }
+    },
+    "agents": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "zone",
+          "closure",
+          "threshold",
+          "violating_now",
+          "requirements",
+          "inbound",
+          "outbound"
+        ],
+        "properties": {
+          "zone": {
+            "type": "string"
+          },
+          "closure": {
+            "$ref": "#/$defs/levels"
+          },
+          "threshold": {
+            "$ref": "#/$defs/levels"
+          },
+          "violating_now": {
+            "type": "boolean"
+          },
+          "requirements": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/levels"
+            }
+          },
+          "inbound": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/ref"
+            }
+          },
+          "outbound": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/ref"
+            }
+          }
+        }
+      }
+    },
+    "surfaces": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "closure",
+          "requirements"
+        ],
+        "properties": {
+          "closure": {
+            "$ref": "#/$defs/levels"
+          },
+          "requirements": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/levels"
+            }
+          }
+        }
+      }
+    },
+    "signature": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "alg",
+        "key_id",
+        "sig"
+      ],
+      "properties": {
+        "alg": {
+          "const": "ed25519"
+        },
+        "key_id": {
+          "type": "string"
+        },
+        "sig": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "levels": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "P",
+        "U",
+        "E"
+      ],
+      "properties": {
+        "P": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3
+        },
+        "U": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3
+        },
+        "E": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3
+        }
+      }
+    },
+    "ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "surface",
+        "flow_type"
+      ],
+      "properties": {
+        "surface": {
+          "type": "string"
+        },
+        "flow_type": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
