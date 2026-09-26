@@ -1,16 +1,20 @@
-"""Load and validate MESA estate topology JSON (v0.1)."""
+"""Load and validate MESA estate topology JSON (v0.1 boolean, v0.2 graded)."""
 
 from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Any, Dict, List, Union
+from typing import TYPE_CHECKING, Any, Union
 
 from .graph import Edge, EstateGraph, Vertex, VertexKind
+
+if TYPE_CHECKING:
+    from .lattice import LGraph
 
 PathLike = Union[str, Path]
 
 _SCHEMA_REL = Path("schemas") / "v0.1" / "mesa-topology.schema.json"
+_SCHEMA_V02_REL = Path("schemas") / "v0.2" / "mesa-topology.schema.json"
 
 
 class TopologyError(ValueError):
@@ -33,8 +37,18 @@ def schema_path() -> Path:
     )
 
 
-def _load_schema() -> Dict[str, Any]:
-    return json.loads(schema_path().read_text(encoding="utf-8"))
+def schema_v02_path() -> Path:
+    """Resolve the v0.2 (graded) topology schema next to the repo / install root."""
+    here = Path(__file__).resolve().parent
+    for p in (here.parent / _SCHEMA_V02_REL, here / "data" / "mesa-topology-v0.2.schema.json"):
+        if p.is_file():
+            return p
+    raise TopologyError(f"v0.2 topology schema not found; expected at {here.parent / _SCHEMA_V02_REL}")
+
+
+def _load_schema(version: str = "0.1.0") -> dict[str, Any]:
+    path = schema_v02_path() if version == "0.2.0" else schema_path()
+    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def validate_topology_document(doc: Any) -> None:
@@ -48,18 +62,19 @@ def validate_topology_document(doc: Any) -> None:
             "install mesa-ibi-scanner with its dependencies"
         ) from exc
 
-    schema = _load_schema()
+    version = doc.get("topology_version", "0.1.0") if isinstance(doc, dict) else "0.1.0"
+    schema = _load_schema(version)
     validator = Draft202012Validator(schema)
     errors = sorted(validator.iter_errors(doc), key=lambda e: list(e.path))
     if errors:
-        lines: List[str] = ["topology schema validation failed:"]
+        lines: list[str] = ["topology schema validation failed:"]
         for err in errors:
             loc = ".".join(str(p) for p in err.absolute_path) or "(root)"
             lines.append(f"  - {loc}: {err.message}")
         raise TopologyError("\n".join(lines))
 
 
-def document_to_graph(doc: Dict[str, Any]) -> EstateGraph:
+def document_to_graph(doc: dict[str, Any]) -> EstateGraph:
     """Build an EstateGraph from a validated topology document."""
     g = EstateGraph()
     seen: set[str] = set()
@@ -99,8 +114,36 @@ def document_to_graph(doc: Dict[str, Any]) -> EstateGraph:
     return g
 
 
+def read_document(path: PathLike) -> dict[str, Any]:
+    """Read and validate a topology JSON file of either version."""
+    p = Path(path)
+    try:
+        text = p.read_text(encoding="utf-8")
+    except OSError as exc:
+        raise TopologyError(f"cannot read topology file: {p}: {exc}") from exc
+    try:
+        doc = json.loads(text)
+    except json.JSONDecodeError as exc:
+        raise TopologyError(f"invalid JSON in {p}: {exc}") from exc
+    if not isinstance(doc, dict):
+        raise TopologyError(f"topology root must be an object, got {type(doc).__name__}")
+    validate_topology_document(doc)
+    return doc
+
+
+def load_any(path: PathLike) -> LGraph:
+    """Load a v0.1 or v0.2 topology as a lattice graph (v0.1 is auto-promoted)."""
+    from .lattice import document_to_lgraph
+
+    doc = read_document(path)
+    try:
+        return document_to_lgraph(doc)
+    except (KeyError, ValueError) as exc:
+        raise TopologyError(str(exc)) from exc
+
+
 def load_topology(path: PathLike) -> EstateGraph:
-    """Read, validate, and convert a topology JSON file to EstateGraph."""
+    """Read, validate, and convert a v0.1 topology JSON file to EstateGraph."""
     p = Path(path)
     try:
         text = p.read_text(encoding="utf-8")

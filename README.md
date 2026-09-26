@@ -80,6 +80,17 @@ These masks are **not** a measured false-positive model. They replace the old ha
   - `$id`: `https://raw.githubusercontent.com/uddeshya-world/mesa-ibi-scanner/v0.3.0/schemas/v0.1/mesa-topology.schema.json`
 - Example topology: [`schemas/examples/topology-hf-like.json`](schemas/examples/topology-hf-like.json) (matches `hf_like` fixture)
 
+## Graded lattice (v0.4)
+
+`--lattice` (automatic for `topology_version: "0.2.0"` input) evaluates four levels per dimension instead of one bit, with per-zone thresholds from `thresholds/zones.json`. The specification is [`docs/LATTICE.md`](docs/LATTICE.md). Thresholds are pre-registered and pending owner approval; they cannot be set from the input.
+
+```bash
+mesa-ibi-scan --input topology-v02.json --format json --exit-code --frontier-out frontier.json
+mesa-ibi-scan --fixture hf_like --lattice --format text
+```
+
+Findings name the zone, the graded closure, a witness path per dimension and a minimal cut. A v0.1 document is promoted (bit 1 becomes level 3) and keeps its v0.1 verdict in every zone.
+
 ## Related works (paper ↔ scanner)
 
 See [`RELATED.md`](RELATED.md). Summary:
