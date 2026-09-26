@@ -1,0 +1,55 @@
+{
+  "task": "TASK-0012",
+  "commit": "4c6dee3e2b06a5108de8e4dd1e2a89b53412e54e",
+  "gate": "G12",
+  "checks": [
+    {
+      "id": "T0",
+      "result": "pass"
+    },
+    {
+      "id": "T1",
+      "result": "pass",
+      "cases": 12
+    },
+    {
+      "id": "T2",
+      "result": "pass",
+      "cases": 5,
+      "seed": [
+        0,
+        1,
+        2,
+        3,
+        42
+      ]
+    },
+    {
+      "id": "T3",
+      "result": "pass",
+      "cases": 10
+    }
+  ],
+  "golden": {
+    "public": "10/10",
+    "holdout": {
+      "result": "see-status",
+      "status_context": "holdout"
+    }
+  },
+  "benchmarks": [],
+  "mutation_score": null,
+  "protected_paths_changed": [
+    "gates/g12.yaml",
+    "tasks/TASK-0012.md"
+  ],
+  "tool_versions": {
+    "python": "3.12.3",
+    "pytest": "9.1.1",
+    "ruff": "0.16.9",
+    "mypy": "2.3.1",
+    "hypothesis": "none",
+    "jev": "none"
+  },
+  "reproduce": "make evidence TASK=TASK-0012"
+}
