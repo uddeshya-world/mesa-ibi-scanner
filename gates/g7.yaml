@@ -1,0 +1,20 @@
+gate: G7
+milestone: Scanner v0.4
+machine_checks:
+  - id: prior-tests-green
+    command: make verify
+    description: T1-T3 green including all 27 v0.1 tests
+  - id: properties
+    command: make t2
+    description: P-01 to P-05, P-07, P-10 to P-12 green at 10,000 cases, seed 7 (P-06 is mesa-d, G-P1)
+  - id: b01
+    command: make bench
+    target_s: 30
+  - id: fp-reduction
+    description: FP reduction meets the G6 pre-registered target on 3 estates
+    status: blocked-on-owner-labels
+human_signoff:
+  - id: fp-report
+    owner: "@uddeshya-world"
+    requirement: Owner approves the FP report
+    status: pending
