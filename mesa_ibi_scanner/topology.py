@@ -114,6 +114,31 @@ def document_to_graph(doc: dict[str, Any]) -> EstateGraph:
     return g
 
 
+def timeline_schema_path() -> Path:
+    here = Path(__file__).resolve().parent
+    for p in (here.parent / "schemas" / "v0.2" / "mesa-timeline.schema.json", here / "data" / "mesa-timeline.schema.json"):
+        if p.is_file():
+            return p
+    raise TopologyError("timeline schema not found")
+
+
+def validate_timeline_document(doc: Any) -> None:
+    """Validate a timeline and every snapshot in it."""
+    from jsonschema import Draft202012Validator
+
+    schema = json.loads(timeline_schema_path().read_text(encoding="utf-8"))
+    errors = sorted(Draft202012Validator(schema).iter_errors(doc), key=lambda e: list(e.path))
+    if errors:
+        first = errors[0]
+        loc = ".".join(str(p) for p in first.absolute_path) or "(root)"
+        raise TopologyError(f"timeline schema validation failed: {loc}: {first.message}")
+    for i, step in enumerate(doc["steps"]):
+        try:
+            validate_topology_document(step["topology"])
+        except TopologyError as exc:
+            raise TopologyError(f"steps[{i}].topology: {exc}") from exc
+
+
 def read_document(path: PathLike) -> dict[str, Any]:
     """Read and validate a topology JSON file of either version."""
     p = Path(path)

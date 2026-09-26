@@ -6,6 +6,7 @@ import argparse
 import json
 import sys
 from pathlib import Path
+from typing import Any
 
 from . import __label__, __version__
 from .fixtures import FIXTURES
@@ -33,6 +34,11 @@ def _build_parser() -> argparse.ArgumentParser:
         "--fixture",
         choices=sorted(FIXTURES.keys()),
         help="Toy fixture name (HF/DseWiki-shaped; not live scanning).",
+    )
+    src.add_argument(
+        "--timeline",
+        metavar="TIMELINE.json",
+        help="Temporal closure over a timeline of snapshots (docs/TEMPORAL.md).",
     )
     src.add_argument(
         "--input",
@@ -87,12 +93,63 @@ def _build_parser() -> argparse.ArgumentParser:
     return parser
 
 
+def _run_timeline(args: argparse.Namespace) -> int:
+    from .lattice import thresholds_sha256
+    from .temporal import evaluate_timeline
+    from .topology import validate_timeline_document
+
+    try:
+        doc = json.loads(Path(args.timeline).read_text(encoding="utf-8"))
+        validate_timeline_document(doc)
+        steps = evaluate_timeline(doc)
+    except (OSError, ValueError, KeyError, TopologyError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 2
+    payload: dict[str, Any] = {
+        "version": __version__,
+        "label": __label__,
+        "mode": "temporal",
+        "timeline": str(args.timeline),
+        "thresholds_sha256": thresholds_sha256(),
+        "steps": [
+            {
+                "t": s["t"],
+                "agents": [f.as_dict() for f in s["findings"]],
+                "memory": {a: {"P": m[0], "U": m[1], "E": m[2]} for a, m in s["memory"].items()},
+                "attested_wipes": s["attested_wipes"],
+                "unattested_wipe_claims": s["unattested_wipe_claims"],
+                "violation_count": sum(1 for f in s["findings"] if f.violation),
+                "near_miss_count": sum(1 for f in s["findings"] if f.near_miss),
+            }
+            for s in steps
+        ],
+    }
+    if args.format == "text":
+        lines = [f"mesa-ibi-scanner {__version__} [{__label__}] temporal mode", f"timeline: {args.timeline}", "-" * 60]
+        for s in payload["steps"]:
+            for a in s["agents"]:
+                c = a["closure"]
+                flag = "INV01" if a["violation"] else ("NEAR_MISS " + ",".join(a["missing"]) if a["near_miss"] else "ok")
+                lines.append(f"t={s['t']} {a['agent_id']} [{a['zone']}]: Cl=(P{c['P']},U{c['U']},E{c['E']}) => {flag}")
+            for claim in s["unattested_wipe_claims"]:
+                lines.append(f"t={s['t']} {claim}: wipe claimed but not attested; memory kept")
+        print("\n".join(lines))
+    else:
+        print(json.dumps(payload, indent=2))
+    if args.exit_code and any(s["violation_count"] for s in payload["steps"]):
+        return 1
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = _build_parser()
     args = parser.parse_args(argv)
 
     if args.json:
         args.format = "json"
+
+    if args.timeline is not None:
+        return _run_timeline(args)
 
     if args.input is None and args.fixture is None:
         args.fixture = "hf_like"

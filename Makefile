@@ -18,13 +18,13 @@ t0:
 	$(PYTHON) .github/harness/t0.py
 
 t1:
-	$(PYTHON) -m pytest -q --color=no tests/test_topology.py tests/test_topology_pdp_optional.py tests/test_cli_output.py tests/test_lattice_unit.py
+	$(PYTHON) -m pytest -q --color=no tests/test_topology.py tests/test_topology_pdp_optional.py tests/test_cli_output.py tests/test_lattice_unit.py tests/test_temporal.py
 
 t2:
-	$(PYTHON) -m pytest -q --color=no tests/test_properties.py tests/test_lattice_properties.py
+	$(PYTHON) -m pytest -q --color=no tests/test_properties.py tests/test_lattice_properties.py tests/test_temporal_properties.py
 
 t3:
-	$(PYTHON) -m pytest -q --color=no tests/test_closure.py tests/test_lattice_golden.py
+	$(PYTHON) -m pytest -q --color=no tests/test_closure.py tests/test_lattice_golden.py tests/test_temporal_golden.py
 
 t3-holdout:
 	$(PYTHON) .github/harness/holdout.py

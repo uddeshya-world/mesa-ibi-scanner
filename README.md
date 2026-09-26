@@ -89,6 +89,8 @@ mesa-ibi-scan --input topology-v02.json --format json --exit-code --frontier-out
 mesa-ibi-scan --fixture hf_like --lattice --format text
 ```
 
+Temporal closure over a sequence of snapshots runs with `mesa-ibi-scan --timeline timeline.json` ([`docs/TEMPORAL.md`](docs/TEMPORAL.md)). An agent with durable memory keeps what it read until an infrastructure-observed wipe.
+
 Findings name the zone, the graded closure, a witness path per dimension and a minimal cut. A v0.1 document is promoted (bit 1 becomes level 3) and keeps its v0.1 verdict in every zone.
 
 ## Related works (paper ↔ scanner)
