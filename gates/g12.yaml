@@ -1,0 +1,16 @@
+gate: G12
+milestone: Standards and drift design
+machine_checks:
+  - id: crosswalk-rows-cite-control-and-artifact
+    files: [docs/crosswalks/nist-800-53.md, docs/crosswalks/iso-27001.md, docs/crosswalks/iso-42001.md, docs/crosswalks/owasp-asi.md]
+  - id: mesa-d-design-note-merged
+    file: docs/MESA-D-DESIGN.md
+human_signoff:
+  - id: submission-receipts
+    owner: "@uddeshya-world"
+    requirement: Owner confirms submission receipts (ACM to OWASP GenAI and/or OpenID Foundation; taxonomy proposal)
+    status: pending
+  - id: crosswalk-approval
+    owner: "@uddeshya-world"
+    requirement: Owner approves crosswalks before they leave the repo
+    status: pending
