@@ -3,14 +3,22 @@
 from __future__ import annotations
 
 import argparse
+import json
 import sys
 from pathlib import Path
 
 from . import __label__, __version__
 from .fixtures import FIXTURES
 from .graph import evaluate_invariant
-from .report import format_json, format_sarif, format_text
-from .topology import TopologyError, load_topology
+from .report import (
+    format_json,
+    format_lattice_json,
+    format_lattice_sarif,
+    format_lattice_text,
+    format_sarif,
+    format_text,
+)
+from .topology import TopologyError, document_to_graph, read_document
 
 
 def _build_parser() -> argparse.ArgumentParser:
@@ -57,6 +65,21 @@ def _build_parser() -> argparse.ArgumentParser:
         ),
     )
     parser.add_argument(
+        "--lattice",
+        action="store_true",
+        help="Graded lattice evaluation (docs/LATTICE.md). Automatic for v0.2 input.",
+    )
+    parser.add_argument(
+        "--frontier-out",
+        metavar="FRONTIER.json",
+        help="Write the per-agent closure frontier (implies lattice mode).",
+    )
+    parser.add_argument(
+        "--sign-key",
+        metavar="ED25519.pem",
+        help="Sign the exported frontier with this Ed25519 private key (needs the 'sign' extra).",
+    )
+    parser.add_argument(
         "--version",
         action="version",
         version=f"mesa-ibi-scanner {__version__}",
@@ -74,23 +97,58 @@ def main(argv: list[str] | None = None) -> int:
     if args.input is None and args.fixture is None:
         args.fixture = "hf_like"
 
+    from .lattice import (
+        document_to_lgraph,
+        evaluate,
+        frontier,
+        promote,
+        sign_frontier,
+        thresholds_sha256,
+    )
+
+    lg = None
     try:
         if args.input is not None:
-            g = load_topology(args.input)
+            doc = read_document(args.input)
             source = str(args.input)
             source_kind = "input"
             input_uri = Path(args.input).expanduser().resolve().as_uri()
+            if args.lattice or args.frontier_out or doc.get("topology_version") == "0.2.0":
+                lg = document_to_lgraph(doc)
+            else:
+                g = document_to_graph(doc)
         else:
             g = FIXTURES[args.fixture]()
             source = args.fixture
             source_kind = "fixture"
             input_uri = f"fixture://{args.fixture}"
+            if args.lattice or args.frontier_out:
+                lg = promote(g)
     except TopologyError as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2
     except Exception as exc:  # noqa: BLE001 — surface load errors clearly
         print(f"error: {exc}", file=sys.stderr)
         return 2
+
+    if lg is not None:
+        findings = evaluate(lg)
+        sha = thresholds_sha256()
+        if args.format == "json":
+            print(format_lattice_json(findings, source=source, source_kind=source_kind, thresholds_sha256=sha))
+        elif args.format == "sarif":
+            print(format_lattice_sarif(findings, source=source, source_kind=source_kind, thresholds_sha256=sha,
+                                       input_uri=input_uri))
+        else:
+            print(format_lattice_text(findings, source=source, source_kind=source_kind, thresholds_sha256=sha))
+        if args.frontier_out:
+            fr = frontier(lg)
+            if args.sign_key:
+                fr = sign_frontier(fr, Path(args.sign_key).read_bytes())
+            Path(args.frontier_out).write_bytes((json.dumps(fr, indent=2, sort_keys=True) + "\n").encode("utf-8"))
+        if args.exit_code and any(f.violation for f in findings):
+            return 1
+        return 0
 
     results = evaluate_invariant(g)
 

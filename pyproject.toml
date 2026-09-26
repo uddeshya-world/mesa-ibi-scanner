@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mesa-ibi-scanner"
-version = "0.3.2"
+version = "0.4.0"
 description = "Research prototype: MESA Invariant 1 Cl(b) reachability fixpoint (not production)"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -35,7 +35,8 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest>=7.0"]
+sign = ["cryptography>=42"]
+dev = ["pytest>=7.0", "cryptography>=42"]
 
 [project.scripts]
 mesa-ibi-scan = "mesa_ibi_scanner.cli:main"
@@ -52,7 +53,7 @@ where = ["."]
 include = ["mesa_ibi_scanner*"]
 
 [tool.setuptools.package-data]
-mesa_ibi_scanner = ["py.typed"]
+mesa_ibi_scanner = ["py.typed", "data/*.json"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
