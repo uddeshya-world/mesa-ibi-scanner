@@ -1,0 +1,12 @@
+gate: G-P3
+milestone: Evidence and standards
+machine_checks:
+  - id: evidence-pack-from-ci-only
+    description: mesa-lab/evidence_pack builds from CI artifacts only and verifies every decision record
+  - id: calibration-per-pinned-version
+    status: blocked-on-model-and-labels
+human_signoff:
+  - id: product-gate-decision
+    owner: "@uddeshya-world"
+    requirement: Owner records the product-gate decision against the three triggers (DECISIONS.md)
+    status: pending

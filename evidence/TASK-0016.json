@@ -1,0 +1,77 @@
+{
+  "task": "TASK-0016",
+  "commit": "faf71d5f90e54baa26308e091e8daaf0c738f9d3",
+  "gate": "G-P3a",
+  "checks": [
+    {
+      "id": "T0",
+      "result": "pass"
+    },
+    {
+      "id": "T1",
+      "result": "pass",
+      "cases": 49
+    },
+    {
+      "id": "T2",
+      "result": "pass",
+      "cases": 34,
+      "seed": [
+        0,
+        1,
+        2,
+        3,
+        42
+      ]
+    },
+    {
+      "id": "T2-lattice",
+      "result": "pass",
+      "cases": 10000,
+      "seed": 7
+    },
+    {
+      "id": "T3",
+      "result": "pass",
+      "cases": 101
+    }
+  ],
+  "golden": {
+    "public": "101/101",
+    "holdout": {
+      "result": "see-status",
+      "status_context": "holdout"
+    }
+  },
+  "benchmarks": [
+    {
+      "id": "B-01",
+      "result": "pass",
+      "target_s": 30.0,
+      "agents": 1000,
+      "services": 200,
+      "edges": 6000
+    }
+  ],
+  "mutation_score": null,
+  "protected_paths_changed": [
+    "Makefile",
+    "fixtures/runtime/decision-records.jsonl",
+    "fixtures/runtime/observed-edges.jsonl",
+    "gates/g-p3.yaml",
+    "schemas/v0.3-draft/mesa-decision-record.schema.json",
+    "schemas/v0.3-draft/mesa-observed-edge.schema.json",
+    "tasks/TASK-0016.md",
+    "tests/test_runtime_schemas.py"
+  ],
+  "tool_versions": {
+    "python": "3.12.3",
+    "pytest": "9.1.1",
+    "ruff": "0.16.9",
+    "mypy": "2.3.1",
+    "hypothesis": "none",
+    "cryptography": "50.0.1",
+    "jev": "none"
+  },
+  "reproduce": "make evidence TASK=TASK-0016"
+}

@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/uddeshya-world/mesa-ibi-scanner/main/schemas/v0.3-draft/mesa-observed-edge.schema.json",
+  "title": "MESA observed-edge event (draft, ACM v1 runtime extension)",
+  "description": "Normalised infrastructure observation consumed by mesa-d (docs/MESA-D-DESIGN.md section 3). Draft pending owner approval.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "event_version",
+    "source_id",
+    "observed_at",
+    "kind",
+    "event_id"
+  ],
+  "properties": {
+    "event_version": {
+      "const": "0.1.0"
+    },
+    "source_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "observed_at": {
+      "type": "string"
+    },
+    "kind": {
+      "enum": [
+        "api-call",
+        "http",
+        "exec",
+        "memory-wipe",
+        "canary-echo",
+        "session"
+      ]
+    },
+    "principal": {
+      "type": "string"
+    },
+    "action": {
+      "type": "string"
+    },
+    "resource": {
+      "type": "string"
+    },
+    "method": {
+      "type": "string"
+    },
+    "host": {
+      "type": "string"
+    },
+    "path": {
+      "type": "string"
+    },
+    "bytes_out": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "session_id": {
+      "type": "string"
+    },
+    "token": {
+      "type": "string"
+    },
+    "raw_ref": {
+      "type": "string"
+    },
+    "event_id": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}

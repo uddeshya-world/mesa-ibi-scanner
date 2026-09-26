@@ -18,7 +18,7 @@ t0:
 	$(PYTHON) .github/harness/t0.py
 
 t1:
-	$(PYTHON) -m pytest -q --color=no tests/test_topology.py tests/test_topology_pdp_optional.py tests/test_cli_output.py tests/test_lattice_unit.py tests/test_temporal.py tests/test_claims.py
+	$(PYTHON) -m pytest -q --color=no tests/test_topology.py tests/test_topology_pdp_optional.py tests/test_cli_output.py tests/test_lattice_unit.py tests/test_temporal.py tests/test_claims.py tests/test_runtime_schemas.py
 
 t2:
 	$(PYTHON) -m pytest -q --color=no tests/test_properties.py tests/test_lattice_properties.py tests/test_temporal_properties.py tests/test_advisory.py

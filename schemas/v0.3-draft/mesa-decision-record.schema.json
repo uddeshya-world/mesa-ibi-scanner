@@ -1,0 +1,316 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/uddeshya-world/mesa-ibi-scanner/main/schemas/v0.3-draft/mesa-decision-record.schema.json",
+  "title": "MESA decision record (draft, ACM v1 runtime extension)",
+  "description": "One signed record per enforcement-point verdict (roadmap Section 13; P-16). Draft pending owner approval.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "record_id",
+    "time",
+    "agent",
+    "principal_chain",
+    "obo_token_sha256",
+    "requested_edge",
+    "state_before",
+    "state_after",
+    "zone",
+    "threshold",
+    "frontier_version",
+    "deterministic_verdict",
+    "reason",
+    "jev",
+    "final_verdict",
+    "reviewer_override",
+    "signature"
+  ],
+  "properties": {
+    "record_id": {
+      "type": "string",
+      "pattern": "^dr-"
+    },
+    "time": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "agent": {
+      "type": "string"
+    },
+    "principal_chain": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "obo_token_sha256": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "requested_edge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "surface",
+        "flow",
+        "direction",
+        "levels"
+      ],
+      "properties": {
+        "surface": {
+          "type": "string"
+        },
+        "flow": {
+          "type": "string"
+        },
+        "direction": {
+          "enum": [
+            "inbound",
+            "outbound"
+          ]
+        },
+        "levels": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "P",
+                "U",
+                "E"
+              ],
+              "properties": {
+                "P": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 3
+                },
+                "U": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 3
+                },
+                "E": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 3
+                }
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "state_before": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "P",
+            "U",
+            "E"
+          ],
+          "properties": {
+            "P": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 3
+            },
+            "U": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 3
+            },
+            "E": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 3
+            }
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "state_after": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "P",
+            "U",
+            "E"
+          ],
+          "properties": {
+            "P": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 3
+            },
+            "U": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 3
+            },
+            "E": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 3
+            }
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "zone": {
+      "enum": [
+        "research",
+        "staging",
+        "production",
+        "regulated"
+      ]
+    },
+    "threshold": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "P",
+            "U",
+            "E"
+          ],
+          "properties": {
+            "P": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 3
+            },
+            "U": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 3
+            },
+            "E": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 3
+            }
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "frontier_version": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "deterministic_verdict": {
+      "enum": [
+        "ALLOW",
+        "HOLD",
+        "BLOCK"
+      ]
+    },
+    "reason": {
+      "type": "string"
+    },
+    "witness": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "min_cut": {
+      "type": [
+        "array",
+        "null"
+      ]
+    },
+    "jev": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "required": [
+            "model_version",
+            "answers",
+            "failure"
+          ],
+          "properties": {
+            "model_version": {
+              "type": "string"
+            },
+            "answers": {
+              "type": "array"
+            },
+            "failure": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "final_verdict": {
+      "enum": [
+        "ALLOW",
+        "HOLD",
+        "BLOCK"
+      ]
+    },
+    "reviewer_override": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "required": [
+            "reviewer",
+            "verdict",
+            "reason",
+            "time"
+          ]
+        }
+      ]
+    },
+    "signature": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "alg",
+        "key_id",
+        "sig"
+      ],
+      "properties": {
+        "alg": {
+          "const": "ed25519"
+        },
+        "key_id": {
+          "type": "string"
+        },
+        "sig": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
