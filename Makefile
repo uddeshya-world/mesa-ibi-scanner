@@ -5,7 +5,7 @@ PYTHON ?= python3
 
 .DEFAULT_GOAL := verify
 
-.PHONY: verify t0 t1 t2 t3 t3-holdout evidence
+.PHONY: verify t0 t1 t2 t3 t3-holdout evidence check-claims
 
 # T0, then T1, then T2, then T3. Stop on the first failure.
 verify:
@@ -18,7 +18,7 @@ t0:
 	$(PYTHON) .github/harness/t0.py
 
 t1:
-	$(PYTHON) -m pytest -q --color=no tests/test_topology.py tests/test_topology_pdp_optional.py tests/test_cli_output.py
+	$(PYTHON) -m pytest -q --color=no tests/test_topology.py tests/test_topology_pdp_optional.py tests/test_cli_output.py tests/test_claims.py
 
 t2:
 	$(PYTHON) -m pytest -q --color=no tests/test_properties.py
@@ -28,6 +28,10 @@ t3:
 
 t3-holdout:
 	$(PYTHON) .github/harness/holdout.py
+
+# G11: every published number maps to a claims-ledger row.
+check-claims:
+	$(PYTHON) .github/harness/check_claims.py
 
 # Usage: make evidence TASK=TASK-0001
 evidence:
