@@ -1,0 +1,57 @@
+{
+  "task": "TASK-0013",
+  "commit": "6b784c95fee28edfb4412a17697d284a3bbae3e8",
+  "gate": "G-P2b",
+  "checks": [
+    {
+      "id": "T0",
+      "result": "pass"
+    },
+    {
+      "id": "T1",
+      "result": "pass",
+      "cases": 12
+    },
+    {
+      "id": "T2",
+      "result": "pass",
+      "cases": 21,
+      "seed": [
+        0,
+        1,
+        2,
+        3,
+        42
+      ]
+    },
+    {
+      "id": "T3",
+      "result": "pass",
+      "cases": 10
+    }
+  ],
+  "golden": {
+    "public": "10/10",
+    "holdout": {
+      "result": "see-status",
+      "status_context": "holdout"
+    }
+  },
+  "benchmarks": [],
+  "mutation_score": null,
+  "protected_paths_changed": [
+    ".github/harness/evidence.py",
+    "Makefile",
+    "tasks/TASK-0013.md",
+    "tests/test_advisory.py"
+  ],
+  "tool_versions": {
+    "python": "3.12.3",
+    "pytest": "9.1.1",
+    "ruff": "0.16.9",
+    "mypy": "2.3.1",
+    "hypothesis": "none",
+    "jev": "none"
+  },
+  "reproduce": "make evidence TASK=TASK-0013"
+}
