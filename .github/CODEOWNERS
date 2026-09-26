@@ -6,6 +6,9 @@
 # Built-in graphs live in fixtures.py. Expected outputs are the assertions
 # in tests/. Example documents live under schemas/examples/.
 /mesa_ibi_scanner/fixtures.py @uddeshya-world
+/fixtures/ @uddeshya-world
+/mesa_ibi_scanner/data/ @uddeshya-world
+/benchmarks/ @uddeshya-world
 /tests/ @uddeshya-world
 /schemas/ @uddeshya-world
 
