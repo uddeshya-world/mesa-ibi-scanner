@@ -1,0 +1,23 @@
+gate: G8
+milestone: Base-rate data
+status: pre-registered, pending owner approval
+criteria: docs/BASERATE.md
+# The first corpus result must have a commit timestamp later than this file's
+# first commit on main. A change to docs/BASERATE.md sections 3-6 after a run
+# invalidates that run.
+sampling_seed: 20261001
+target_included: 100
+minimum_reported: 80
+machine_checks:
+  - id: criteria-before-run
+    command: git log --diff-filter=A --format=%cI -- gates/g8.yaml docs/BASERATE.md
+  - id: reproduce
+    command: make reproduce-baserate   # in mesa-lab
+    description: matches published numbers byte for byte
+  - id: dataset-doi
+    status: pending
+human_signoff:
+  - id: exclusions
+    owner: "@uddeshya-world"
+    requirement: Owner checks every exclusion and its reason
+    status: pending
