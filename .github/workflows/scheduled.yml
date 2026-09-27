@@ -82,6 +82,7 @@ jobs:
           out = {"tier": "T8", "stats": s, "mutation_score": score}
           json.dump(out, open("mutation.json", "w"), indent=2, sort_keys=True)
           print(json.dumps(out, sort_keys=True))
+          raise SystemExit(0 if score is not None else "t8: no mutants were run")
           PY
       # actions/upload-artifact@v4.6.2
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
