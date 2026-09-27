@@ -73,6 +73,7 @@ jobs:
         run: |
           mutmut run --max-children 4 || true
           mutmut export-cicd-stats
+          mutmut results > survivors.txt 2>&1 || true
           python - <<'PY'
           import json
           s = json.load(open("mutants/mutmut-cicd-stats.json"))
@@ -88,5 +89,7 @@ jobs:
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: t8-mutation
-          path: mutation.json
+          path: |
+            mutation.json
+            survivors.txt
           retention-days: 90
