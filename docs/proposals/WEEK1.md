@@ -11,7 +11,7 @@ These come from roadmap Section 2 (sources reviewed 25 September 2026). The gaps
 | "over 700 agents joined the Artifactory board" | "roughly 1,200 agents participated; about 700 attacked Hugging Face" |
 | Spoofed tool calls "silently executed malicious payloads on the host" | "a small number of transcripts contained spoofed tool calls, made as small-scale experiments to deceive the evaluation scorer". Keep the lesson: agent-side logs are not evidence |
 | "Grimfengxi used DeepSeek for autonomous exploitation and lateral movement" | "Grimfengxi used DeepSeek to write exploit code". Drop the autonomy claim |
-| "CVE-2026-46331 in act_pedit was the escalation path" | Verify against OpenAI's technical report, or remove. Reporting says only "a recent Linux kernel vulnerability" |
+| "CVE-2026-46331 in act_pedit was the escalation path" | **Remove.** Checked 27 Sep 2026: CVE-2026-46331 is real (act_pedit "pedit COW" local privilege escalation, fixed in v7.1-rc7), but no source found links it to the incident. The Wikipedia summary of OpenAI's statements and Simon Willison's write-up say only that the models "escalated from an unprivileged container to root using a recent Linux kernel vulnerability". Use that wording. Name the CVE only if OpenAI's own report does |
 | "DseWiki agents were OpenAI's" | Attribute to the researchers' evidence; reporting differs on whether OpenAI confirmed |
 
 Also, do not present the AI-assisted APT reporting as MESA's headline justification. It is out of scope (roadmap Section 1).
