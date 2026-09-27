@@ -1,0 +1,91 @@
+name: scheduled
+
+# T6 performance (nightly) and T8 mutation (weekly), roadmap Section 9.
+on:
+  schedule:
+    - cron: "17 3 * * *"   # nightly T6
+    - cron: "41 4 * * 0"   # weekly T8 (Sunday)
+  workflow_dispatch:
+    inputs:
+      tier:
+        description: t6 or t8
+        required: true
+        default: t6
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  t6:
+    if: github.event.schedule == '17 3 * * *' || inputs.tier == 't6'
+    runs-on: ubuntu-latest
+    steps:
+      # actions/checkout@v4.4.0
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      # actions/setup-python@v5.6.0
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.12.3"
+      - name: Install package
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+      - name: Previous nightly result
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p prev
+          run_id=$(gh run list -R "$GITHUB_REPOSITORY" -w scheduled -s success -L 20 --json databaseId,event \
+            --jq '[.[] | select(.event == "schedule" or .event == "workflow_dispatch")][0].databaseId // empty')
+          if [ -n "$run_id" ]; then gh run download "$run_id" -R "$GITHUB_REPOSITORY" -n t6-bench -D prev || true; fi
+      - name: B-01 and regression check
+        run: |
+          python benchmarks/b01_batch_closure.py | tee bench.json
+          python .github/harness/bench_regress.py bench.json prev/bench.json evaluate_s frontier_s
+      # actions/upload-artifact@v4.6.2
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: t6-bench
+          path: bench.json
+          retention-days: 90
+
+  t8:
+    if: github.event.schedule == '41 4 * * 0' || inputs.tier == 't8'
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      # actions/checkout@v4.4.0
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      # actions/setup-python@v5.6.0
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.12.3"
+      - name: Install package and mutmut
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]" "mutmut==3.8.0"
+      - name: Mutation testing (closure and frontier)
+        run: |
+          mutmut run --max-children 4 || true
+          mutmut export-cicd-stats
+          python - <<'PY'
+          import json
+          s = json.load(open("mutants/mutmut-cicd-stats.json"))
+          killed = s.get("killed", 0) + s.get("timeout", 0)
+          total = killed + s.get("survived", 0)
+          score = round(killed / total, 4) if total else None
+          out = {"tier": "T8", "stats": s, "mutation_score": score}
+          json.dump(out, open("mutation.json", "w"), indent=2, sort_keys=True)
+          print(json.dumps(out, sort_keys=True))
+          PY
+      # actions/upload-artifact@v4.6.2
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: t8-mutation
+          path: mutation.json
+          retention-days: 90
