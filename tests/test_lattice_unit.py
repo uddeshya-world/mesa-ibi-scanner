@@ -201,3 +201,24 @@ def test_packaged_schemas_match_repository_schemas():
                       ("mesa-frontier.schema.json", "schemas/v0.2/mesa-frontier.schema.json"),
                       ("zones.json", "thresholds/zones.json")):
         assert (pkg / name).read_bytes() == (ROOT / rel).read_bytes(), name
+
+
+def test_public_explain_matches_evaluate():
+    import json as _json
+
+    from mesa_ibi_scanner.lattice import (
+        document_to_lgraph,
+        evaluate,
+        explain,
+        load_thresholds,
+    )
+
+    doc = _json.loads((ROOT / "fixtures" / "lattice" / "graded-writer-u-web-production.json").read_text(encoding="utf-8"))["topology"]
+    g = document_to_lgraph(doc).canonical()
+    th = load_thresholds()
+    for f in evaluate(g):
+        if not f.violation:
+            continue
+        ex = explain(g, f.agent_id, f.closure, th[f.zone])
+        assert (ex["witness"], ex["min_cut"], ex["cut_dimension"]) == (f.witness, f.min_cut, f.cut_dimension)
+        assert ex["min_cut"]

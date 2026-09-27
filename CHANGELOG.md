@@ -1,3 +1,10 @@
+## Unreleased
+
+### Added
+- `mesa_ibi_scanner.lattice.explain()`: public single-agent witness paths and minimal cut. `evaluate()` uses it; results are unchanged. Replaces imports of the private `_witness` and `_min_cut`.
+- Scheduled tiers: T6 nightly B-01 with a 10% regression gate, T8 weekly mutation testing (`.github/workflows/scheduled.yml`).
+- 20 graded-incident lattice fixtures; `prereg/manifest.json` with a T0 drift check.
+
 ## 0.4.0 — 2026-09-26
 
 ### Added (graded lattice, TASK-0007, docs/LATTICE.md)

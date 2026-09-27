@@ -401,19 +401,48 @@ def evaluate(g: LGraph, thresholds: dict[str, Levels] | None = None) -> list[Fin
         missing = [DIMS[i] for i in range(3) if c[i] < t[i]]
         f = Finding(aid, vx.zone, c, t, not missing, len(missing) == 1, missing)
         if f.violation:
-            f.witness = {DIMS[i]: _witness(g, inbound, aid, i, c[i]) for i in range(3)}
-            best: tuple[int, int, list[LEdge]] | None = None
-            for i in range(3):
-                if vx.levels[i] >= t[i]:
-                    continue
-                cut = _min_cut(g, residual, aid, i, t[i])
-                if best is None or len(cut) < best[0]:
-                    best = (len(cut), i, cut)
-            if best is not None:
-                f.min_cut = [e.ref() for e in best[2]]
-                f.cut_dimension = DIMS[best[1]]
+            ex = explain(g, aid, c, t, residual=residual, inbound=inbound)
+            f.witness = ex["witness"]
+            f.min_cut = ex["min_cut"]
+            f.cut_dimension = ex["cut_dimension"]
         out.append(f)
     return out
+
+
+def explain(
+    g: LGraph,
+    agent: str,
+    closure_levels: Levels,
+    threshold: Levels,
+    *,
+    residual: list[LEdge] | None = None,
+    inbound: dict[str, list[LEdge]] | None = None,
+) -> dict[str, Any]:
+    """Witness paths and the smallest minimal cut for one agent (docs/LATTICE.md section 8).
+
+    `g` must be canonical (`LGraph.canonical()`). `closure_levels` is the agent's closure,
+    which a caller may have raised (for example by memory, docs/TEMPORAL.md). The cut is
+    taken on the dimension, among those the agent does not hold itself, with the fewest
+    edges; ties go to the lower dimension (P, then U, then E). `min_cut` and
+    `cut_dimension` are None when the agent holds every dimension itself.
+    """
+    if residual is None:
+        residual = g.residual()
+    if inbound is None:
+        inbound = _in_adj(g, residual)
+    witness = {DIMS[i]: _witness(g, inbound, agent, i, closure_levels[i]) for i in range(3)}
+    best: tuple[int, int, list[LEdge]] | None = None
+    for i in range(3):
+        if g.vertices[agent].levels[i] >= threshold[i]:
+            continue
+        cut = _min_cut(g, residual, agent, i, threshold[i])
+        if best is None or len(cut) < best[0]:
+            best = (len(cut), i, cut)
+    return {
+        "witness": witness,
+        "min_cut": [e.ref() for e in best[2]] if best is not None else None,
+        "cut_dimension": DIMS[best[1]] if best is not None else None,
+    }
 
 
 # --- frontier ---------------------------------------------------------------------
