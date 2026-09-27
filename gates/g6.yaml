@@ -1,10 +1,14 @@
 gate: G6
 milestone: Lattice spec
-status: pre-registered, pending owner approval
+status: pre-registered, approved by owner 27 Sep 2026
 # Pre-registration (VALIDATION.md rule 5). Committed before any measurement.
 fp_metric:
   id: G7-FP-reduction
-  estates: three estates derived by mesa-ibi-derive (reference environments or owner estates)
+  estates: >
+    Three estates derived by mesa-ibi-derive, each either a public module from
+    the base-rate corpus (docs/BASERATE.md) or an owner estate. The synthetic
+    reference environments in mesa-ibi-derive/reference are excluded: a
+    false-positive rate on agent-built estates carries no evidence.
   labels: >
     The owner labels every agent that the boolean model flags as a true
     positive (a real P-U-E composition worth a finding in its zone) or a false
@@ -31,4 +35,4 @@ human_signoff:
   - id: thresholds-per-zone
     owner: "@uddeshya-world"
     requirement: Owner approves thresholds per zone
-    status: pending
+    status: approved 27 Sep 2026

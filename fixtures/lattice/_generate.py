@@ -124,6 +124,44 @@ for name, factory in sorted(FIXTURES.items()):
                          "description": f"v0.1 fixture {name} promoted, {zone}; verdict from the v0.1 engine",
                          "topology": doc, "expected": {"violations": want}})
 
+# G. Graded incidents: the paper cases with realistic levels (docs/LATTICE.md section 1),
+# not auto-promoted to 3. Verdicts differ by zone, so they test the thresholds.
+for zone in ZONES:
+    # Hugging Face-shaped: public-writable model registry (U=3) that also proxies to the
+    # open internet (E=3); the eval worker holds internal data (P=2).
+    add(f"graded-hf-{zone}", "graded-incident", f"public-writable registry with open egress, internal-data worker, {zone}",
+        [vx("agent:eval-worker", "agent", (2, 0, 0), zone), vx("svc:artifact-registry", "service", (0, 3, 3))],
+        [ed("svc:artifact-registry", "agent:eval-worker", "read"),
+         ed("svc:artifact-registry", "agent:eval-worker", "proxy/egress")],
+        {"agent:eval-worker": (2, 3, 3)})
+    # Same shape, but the worker only touches synthetic eval data (P=1).
+    add(f"graded-hf-synthetic-{zone}", "graded-incident", f"as graded-hf with synthetic data only (P=1), {zone}",
+        [vx("agent:eval-worker", "agent", (1, 0, 0), zone), vx("svc:artifact-registry", "service", (0, 3, 3))],
+        [ed("svc:artifact-registry", "agent:eval-worker", "read"),
+         ed("svc:artifact-registry", "agent:eval-worker", "proxy/egress")],
+        {"agent:eval-worker": (1, 3, 3)})
+    # DseWiki-shaped: a GET-mutable public wiki (U=3) on the agent's egress allowlist, so
+    # fetching it is an exfiltration channel at allowlisted-external (E=2).
+    add(f"graded-dsewiki-{zone}", "graded-incident", f"allowlisted GET-mutable public wiki, internal-data coder, {zone}",
+        [vx("agent:sandbox-coder", "agent", (2, 0, 0), zone), vx("svc:public-wiki", "service", (0, 3, 2))],
+        [ed("svc:public-wiki", "agent:sandbox-coder", "read"),
+         ed("svc:public-wiki", "agent:sandbox-coder", "proxy/egress")],
+        {"agent:sandbox-coder": (2, 3, 2)})
+    # Writer-only U: the shared notes service has no untrusted input of its own. Its U
+    # comes only from a writer agent that reads the internet; the reader holds internal
+    # data and an allowlisted webhook.
+    for src_name, src_u in (("web", 3), ("internal-api", 1)):
+        add(f"graded-writer-u-{src_name}-{zone}", "graded-incident",
+            f"notes surface whose U comes only from a writer reading {src_name} (U={src_u}), {zone}",
+            [vx(f"svc:{src_name}", "service", (0, src_u, 0)),
+             vx("agent:researcher", "agent", (0, 0, 0), "research"),
+             vx("svc:shared-notes", "service", (2, 0, 0)),
+             vx("agent:ops", "agent", (2, 0, 2), zone)],
+            [ed(f"svc:{src_name}", "agent:researcher", "read"),
+             ed("agent:researcher", "svc:shared-notes", "write"),
+             ed("svc:shared-notes", "agent:ops", "read")],
+            {"agent:researcher": (0, src_u, 0), "agent:ops": (2, src_u, 2)})
+
 for f in fixtures:
     (OUT / f"{f['id']}.json").write_bytes((json.dumps(f, indent=2, sort_keys=True) + "\n").encode("utf-8"))
 print(f"wrote {len(fixtures)} fixtures")

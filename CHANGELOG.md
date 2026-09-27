@@ -6,7 +6,7 @@
 - Schema v0.2 (`schemas/v0.2/mesa-topology.schema.json`) and frontier schema; v0.1 documents are auto-promoted (bit 1 -> level 3).
 - `--lattice` flag; v0.2 input selects lattice mode automatically. SARIF adds `MESA-INV-01-NEAR-MISS` warnings.
 - Temporal closure behind `--timeline` (docs/TEMPORAL.md, TASK-0008): per-agent memory window W; only attested wipes reset; P-08, SC-03, SC-10.
-- 84 lattice golden fixtures, property tests P-01 to P-05, P-07, P-10 to P-12 at 10,000 cases, B-01 benchmark.
+- 104 lattice golden fixtures (including 20 graded-incident fixtures), property tests P-01 to P-05, P-07, P-10 to P-12 at 10,000 cases, B-01 benchmark.
 
 ### Fixed
 - Schemas and thresholds are packaged under `mesa_ibi_scanner/data/`, so a non-editable install can validate `--input` (v0.3.2 could not find its schema outside a checkout).

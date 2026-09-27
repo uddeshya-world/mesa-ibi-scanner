@@ -34,4 +34,4 @@ The paper source is not in this repository, so no trimmed abstract is proposed h
 
 ## 5. Authorship statement for the review pipeline (draft)
 
-"Parts of this work were drafted or checked with AI assistants, including a multi-agent critic pipeline used for completeness checks. The author made all framing decisions, chose which suggested revisions to accept, and is responsible for every claim."
+"Parts of this work were drafted or checked with AI assistants (Claude and Cursor), including a multi-agent critic pipeline used for completeness checks. The author made all framing decisions, chose which suggested revisions to accept, and is responsible for every claim."

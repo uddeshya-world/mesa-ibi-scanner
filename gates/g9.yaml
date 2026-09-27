@@ -1,6 +1,6 @@
 gate: G9
 milestone: Base-rate findings
-status: pre-registered, pending owner approval
+status: pre-registered, approved by owner 27 Sep 2026
 analysis: docs/BASERATE.md section 7
 primary_outcome: BR-1
 interval: wilson-95

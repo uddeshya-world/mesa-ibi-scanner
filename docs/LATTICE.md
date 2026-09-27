@@ -1,6 +1,6 @@
 # Graded lattice specification
 
-Status: draft for TASK-0006 (G6). Owner approval pending. Zone thresholds and the false-positive metric are **pre-registered** in `thresholds/zones.json` and `gates/g6.yaml` before any measurement.
+Status: approved by the owner, 27 Sep 2026 (TASK-0006, G6). Zone thresholds and the false-positive metric are **pre-registered** in `thresholds/zones.json` and `gates/g6.yaml` before any measurement.
 
 The boolean model (v0.1) sets one bit per dimension. It flags every agent whose closure touches any private data, any untrusted input and any egress, however weak. The graded lattice keeps the same closure rule and replaces each bit with a level.
 

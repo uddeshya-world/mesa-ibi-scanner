@@ -16,6 +16,7 @@
 # (the ledger paths are reserved; no ledger file exists yet).
 /gates/ @uddeshya-world
 /thresholds/ @uddeshya-world
+/prereg/ @uddeshya-world
 /zones/ @uddeshya-world
 /claims/ @uddeshya-world
 /claims-ledger/ @uddeshya-world

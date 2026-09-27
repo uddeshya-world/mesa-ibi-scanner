@@ -1,6 +1,6 @@
 # Base-rate study: corpus criteria and analysis plan
 
-Status: **pre-registration draft** for TASK-0010 (G8, G9). Owner approval pending. No corpus run may start before the owner merges this file and `gates/g8.yaml`. A run made before approval, or after a later change to these criteria, is invalid (VALIDATION.md rule 5).
+Status: **pre-registered**, approved by the owner 27 Sep 2026, for TASK-0010 (G8, G9). No corpus run may start before the owner merges this file and `gates/g8.yaml`. A run made before approval, or after a later change to these criteria, is invalid (VALIDATION.md rule 5).
 
 ## 1. Question
 
@@ -16,6 +16,7 @@ One **environment** is one Terraform root module (a directory with a `terraform`
 
 - **Source:** public GitHub repositories with HCL files that declare at least two `aws_iam_role` resources and at least one of `aws_lambda_function`, `aws_ecs_task_definition` or `aws_instance`.
 - **Query:** GitHub code search `resource "aws_iam_role" language:HCL`. It is run once, on a date recorded in the manifest. The full result list (repository, path, commit SHA) is saved to `corpus/frame.json` before sampling.
+- **Query splitting:** GitHub code search caps each query's results and ranks them by relevance, so one query's results are not the population. The query is split by file size (`size:` ranges, chosen so no slice reaches the cap) and the slices are unioned, de-duplicated by repository, path and commit. Any slice that still reaches the cap is recorded in the manifest, and the frame is then reported as a relevance-ranked subset, not the population. This is stated as a limitation in every report.
 - **Sampling:** a uniform random sample without replacement from the frame, seed `20261001`, drawn in frame order. Environments are drawn until 100 have passed the inclusion criteria, or the frame is exhausted.
 - **Target size:** 100 included environments. The roadmap range is 80 to 120. Fewer than 80 is reported as a limitation, and the study still runs.
 
@@ -35,6 +36,8 @@ Exclusions, each recorded with its reason:
 - Repositories whose licence forbids redistribution of derived data. The environment is still counted, but its row is published without paths.
 
 Exclusions are reported with counts per reason.
+
+Parse failures (criterion 1) are reported separately from the exclusions above, with a count and the derive error class for each. Requiring a clean parse biases the sample toward simpler estates, so the report states the parse-failure count next to BR-1 and treats it as a limitation.
 
 ## 5. Measures
 

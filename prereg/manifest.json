@@ -1,0 +1,12 @@
+{
+  "algorithm": "sha256",
+  "sha256": {
+    "docs/BASERATE.md": "a553f7a117a3fa389fd338caba8c293292a24fe1be83ddab2e0c4b54a1284462",
+    "docs/G2_SPIKE.md": "b031d855faf7dddf51b839bb706b3436caec4ca25a69a7509843b9b5b5bc2464",
+    "gates/g2.yaml": "e7b36fc99ef00f8e9ef0822e38b07d61f7a3db050890557d1885c16367112cf4",
+    "gates/g6.yaml": "e8bccba6f609130e34db42148303ca7fa19064c80d6d871a3fc9ffa86e4d2993",
+    "gates/g8.yaml": "629948b75f3771089503f5803784471c57dd69c8c0faea3441d9d6cb698e2d3b",
+    "gates/g9.yaml": "c0cf597826b2097771c8ee04ba995ba44cac1ff03fbef4d92ab7a49e00055171",
+    "thresholds/zones.json": "e58b5cc9ccf60f5ce216158e6c48e4f0b9d171d8b5327acf5f44dfc977c35d47"
+  }
+}

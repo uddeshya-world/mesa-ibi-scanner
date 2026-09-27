@@ -382,6 +382,19 @@ def check_version_consistency() -> None:
         _fail("version drift across pyproject.toml / __init__ / CITATION.cff / .zenodo.json")
 
 
+def check_prereg_manifest() -> None:
+    """Pre-registration files must match prereg/manifest.json (the deposited hashes)."""
+    proc = subprocess.run(
+        [sys.executable, str(ROOT / ".github" / "harness" / "prereg_manifest.py"), "--check"],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    print(proc.stdout.strip())
+    if proc.returncode != 0:
+        _fail("prereg files changed: regenerate the manifest and deposit it again (prereg/README.md)")
+
+
 def main() -> int:
     assert_codeowners_contract()
     checks = (
@@ -393,6 +406,7 @@ def main() -> int:
         ("secrets", check_secrets),
         ("tiers", check_test_tiers),
         ("version", check_version_consistency),
+        ("prereg", check_prereg_manifest),
     )
     failed = False
     for name, fn in checks:
