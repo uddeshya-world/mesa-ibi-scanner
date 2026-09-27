@@ -1,6 +1,6 @@
 gate: G2
 milestone: Derivation spec
-status: pre-registered, pending owner approval
+status: pre-registered, approved by owner 27 Sep 2026
 # Pre-registration (VALIDATION.md rule 5). These targets are committed before
 # any derivation run. A target changed after a run invalidates that run.
 # Values are the roadmap Section 9 initial targets; the owner confirms or
@@ -15,10 +15,18 @@ t4_metrics:
     release_blocking: true
   - id: T4-edge-precision
     definition: >
-      Of edges derive emits (any confidence), the fraction present in the
-      hand-verified topology with the same src, dst and flow_type.
+      Of edges derive emits with confidence derived or inferred, the fraction
+      present in the hand-verified topology with the same src, dst and
+      flow_type. Edges marked requires-review are excluded: DERIVATION.md
+      rule 5 asks derive to over-include uncertain edges for review, and
+      counting them would penalise that and reward dropping them.
     target: 0.80
     comparison: ">="
+  - id: T4-edge-precision-all
+    definition: >
+      As T4-edge-precision, over every emitted edge including requires-review.
+    target: null
+    comparison: report-only
   - id: T4-edge-recall
     definition: >
       Of edges in the hand-verified topology, the fraction derive emits with
@@ -39,7 +47,19 @@ t4_metrics:
 matching:
   vertex_identity: exact vertex id after derive's id normalisation (docs/DERIVATION.md section 3)
   edge_identity: (src, dst, flow_type); pdp_gate and label ignored
-  confidence_counted: all classes count toward precision and recall
+  confidence_counted: >
+    T4-edge-precision counts derived and inferred edges only;
+    T4-edge-precision-all and every recall metric count all classes.
+environments:
+  # G5 measures accuracy on environments derive was not built against.
+  development_only: >
+    mesa-ibi-derive/reference/env-01 to env-04 are synthetic and were written
+    alongside derive, with agent-drafted labels. They are regression fixtures.
+    Results on them are never reported as T4 accuracy.
+  g5_heldout: >
+    At least one environment derive has never been run on, labelled by the
+    owner before any derive output or agent-drafted label for it is opened.
+    The public module from the G2 spike (docs/G2_SPIKE.md) is the first one.
 machine_checks:
   - id: hand-derived-topology-validates
     description: The owner's hand-derived topology validates against schemas/v0.1 and scans.
@@ -56,6 +76,8 @@ human_signoff:
     owner: "@uddeshya-world"
     requirement: >
       Owner records hand-derivation time and hand-authoring time in
-      docs/G2_SPIKE.md. If derivation takes longer than authoring, the
-      Section 14 kill criterion applies.
+      docs/G2_SPIKE.md (reported, not a kill condition). The kill criterion
+      is the one in docs/G2_SPIKE.md: more than 20% of facts need a judgement
+      the rules do not cover, or the derived topology is less correct than
+      the authored one on the step-4 diff.
     status: pending

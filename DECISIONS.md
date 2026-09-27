@@ -1,10 +1,10 @@
 # MESA decision record
 
-Status: DRAFT pending owner approval
+Status: Approved by the owner, 27 Sep 2026 (in force from the owner's merge of this change)
 
 Date: 25 Sep 2026
 
-The text below is the Week 0 decision record, copied from the MESA Final Roadmap, Section 1 (25 Sep 2026). It is framing text. It is not in force until the human owner approves it.
+The text below is the Week 0 decision record, copied from the MESA Final Roadmap, Section 1 (25 Sep 2026). It is framing text, approved by the human owner.
 
 ## Decision
 
@@ -28,7 +28,6 @@ Your own agents, or agents steered by injected content, completing the Privilege
 
 - Cloud-security platform vendors already own the graph, the read access and the buyer. MESA's leverage is its semantics, adopted into their graphs.
 - There is no base-rate number or measured false-positive rate yet. Selling now means selling a claim.
-- Founder attention is already committed to Uroniyx.
 
 ## Month 9 product gate
 

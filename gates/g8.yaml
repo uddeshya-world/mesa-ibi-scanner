@@ -1,6 +1,6 @@
 gate: G8
 milestone: Base-rate data
-status: pre-registered, pending owner approval
+status: pre-registered, approved by owner 27 Sep 2026
 criteria: docs/BASERATE.md
 # The first corpus result must have a commit timestamp later than this file's
 # first commit on main. A change to docs/BASERATE.md sections 3-6 after a run
