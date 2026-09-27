@@ -59,8 +59,9 @@ mesa_ibi_scanner = ["py.typed", "data/*.json"]
 testpaths = ["tests"]
 
 [tool.mutmut]
-# T8 (weekly): closure (graph.py, lattice.py) and frontier (lattice.py). Property tiers are excluded for time.
+# T8 (weekly): closure (graph.py, lattice.py) and frontier (lattice.py). Property tests run at MESA_T2_CASES=200.
 source_paths = ["mesa_ibi_scanner"]
 only_mutate = ["mesa_ibi_scanner/graph.py", "mesa_ibi_scanner/lattice.py"]
-pytest_add_cli_args_test_selection = ["tests/test_closure.py", "tests/test_lattice_unit.py", "tests/test_lattice_golden.py"]
+pytest_add_cli_args_test_selection = ["tests/test_closure.py", "tests/test_lattice_unit.py", "tests/test_lattice_golden.py",
+                                      "tests/test_lattice_properties.py", "tests/test_properties.py", "tests/test_cli_output.py"]
 also_copy = ["fixtures", "thresholds", "schemas", "tests"]
