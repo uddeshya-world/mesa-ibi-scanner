@@ -45,4 +45,18 @@ human_signoff:
   - id: holdout-unreadable-by-agent-tokens
     owner: "@uddeshya-world"
     requirement: Owner confirms holdout content is not readable by agent tokens.
-    status: pending
+    status: waived by owner 2026-09-27
+    note: >
+      Not met as written. The owner chose not to create a separate agent
+      account, so agents act with the owner's token, which can read
+      mesa-holdout. Independence rests instead on how the corpus was made:
+      mesa-holdout commit 5e43e21 (35 fixtures, 8 families) was written by an
+      isolated agent that read only README.md, docs/HOLDOUT.md and
+      schemas/v0.1, computed every expected report by hand, and committed
+      before running the scanner as a black box (0 mismatches). The
+      implementing agent received only counts. First holdout run on main:
+      pass (27 Sep 2026).
+  - id: branch-protection-recorded
+    owner: "@uddeshya-world"
+    requirement: Branch protection on main requires code-owner review and the T0-T3, evidence and protected-paths checks.
+    status: in place 2026-09-27 (enforce_admins false; the owner merges with admin bypass while working alone)
