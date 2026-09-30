@@ -42,3 +42,7 @@
 /CITATION.cff @uddeshya-world
 /docs/VALIDATION.md @uddeshya-world
 /docs/HOLDOUT.md @uddeshya-world
+
+# MESA-AUTOPILOT Section 2.5: agent configuration and this file.
+/.claude/ @uddeshya-world
+/CODEOWNERS @uddeshya-world
