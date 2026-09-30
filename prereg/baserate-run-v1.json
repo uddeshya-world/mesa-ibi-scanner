@@ -1,0 +1,27 @@
+{
+  "code_sha256": {
+    "mesa-lab/corpus/build_frame.py": "b335908f54da2983c4157b69588191875b42629986ac579cee937bf07bfa92b0",
+    "mesa-lab/corpus/sample.py": "26ae47d392fd8c389c1e365ec2b84e8374005679e8461fdd2a03614797e9d17d",
+    "mesa-lab/mesa_lab/baserate/hcl.py": "8b61470e4c87a71519cfdc3fc28991efb4432f6dd297c07b67349ed46fa725e0",
+    "mesa-lab/mesa_lab/baserate/run.py": "f560b811f4959f1279f9febff808c7826df7ef1cc96d960427f00b2190539b4e",
+    "mesa-lab/mesa_lab/baserate/stats.py": "8f1c9d5ce7881f0720c4ae2c646f4015862495d558fd5369bc2d5c60bc4152d4"
+  },
+  "commits": {
+    "mesa-ibi-derive": "b3f84d5621ca0f96d7a85d9d13a3488e3e34f60f",
+    "mesa-ibi-scanner": "95b6079b3e80ade2c675d1ad977ef9e4aa828a67",
+    "mesa-lab": "ca7789a437584e5419c93811148b93b2c3e0be24"
+  },
+  "derive_version": "0.1.0",
+  "frame": {
+    "capped_slices": 0,
+    "frame_date": "2026-09-28",
+    "hits": 143452,
+    "query": "resource \"aws_iam_role\" language:HCL",
+    "sha256": "b5f5882cfd94a5630ee306a7930199a39317364ee6f695da962a554d380f404d",
+    "slices": 324
+  },
+  "prereg_manifest_sha256": "9963f540ae20e13715f550eefcdbc33f73ba8d56a8e1658a33e3a10c1f6e900c",
+  "purpose": "Fixes the base-rate sampling inputs before corpus/sample.py runs (docs/BASERATE.md, gates/g8.yaml).",
+  "sampling_seed": 20261001,
+  "target_included": 100
+}
