@@ -57,6 +57,40 @@ Every milestone, test and pull request is judged against these.
 | Input | Hand-authored topology JSON |
 | Gaps | Derivation, graded lattice, temporal closure, runtime drift, enforcement point |
 
+## Disclosure decision: base-rate study (G8, G9)
+
+Decided by the owner on 30 Sep 2026, before the sample is drawn. It is fixed together with the other base-rate pre-registration (`prereg/`) and is not changed after results exist. A later change applies only to a new run.
+
+**What the study observes.** Public Terraform code at a pinned commit, read offline. derive parses HCL with no provider calls, no credentials, no state files, and no contact with any deployed system. A blackboard-capable service in public infrastructure code is a *capability* (docs/BASERATE.md section 6). It is not evidence of a deployed agent estate, and not by itself a vulnerability.
+
+**Publication.**
+
+1. Papers, the findings note, talks, posts and the README report **aggregates only**: BR-1 to BR-5 with intervals, exclusion and parse-failure counts, and negative cases by count and shape.
+2. No publication names, links, ranks or quotes a sampled repository as having a finding. Worked examples are rebuilt as synthetic topologies with identifiers changed. They are never excerpts of a sampled repository.
+3. The dataset keys result rows by pseudonymous ids (`env-NNNN`). Reproducibility inputs are published: the query, frame, seed and sampling code, plus `corpus/manifest.json`, which maps ids to public repositories at a commit. They are the output of a public search, and `make reproduce-baserate` needs them. The dataset README says that rows show capability in example and template code, not insecurity of a deployed system.
+4. Rows for repositories whose licence forbids redistribution of derived data are published without paths (docs/BASERATE.md section 4).
+
+**No contact during the study.** Nobody working on MESA, human or agent, opens issues, pull requests, discussions or messages on a sampled repository, or contacts its owners, while sampling and analysis are under way. Contact could change the population being measured. Agents never contact third parties about the study at any time.
+
+**When private disclosure applies.** It applies only when the owner, reviewing exclusions or negative cases, finds **both** of the following:
+
+- a live credential or secret committed in the sampled code, or
+- clear evidence that the code describes a deployed production estate where agents run, and the derived P-U-E composition is complete there.
+
+A blackboard-capable service in example or template code does not qualify. In a qualifying case:
+
+1. The owner, not an agent, reports it privately: through GitHub private vulnerability reporting, the repository's `SECURITY.md` contact, or the owner's listed contact, in that order.
+2. The report gives only what is needed to fix the problem. A committed credential is described by file and line, never copied into MESA's data, logs or issues.
+3. The embargo is 90 days from the report, or until a fix, whichever is sooner. The case is never named publicly, even after the embargo, unless its owner agrees in writing.
+4. The environment stays in the sample, so the statistics don't change. Its row is published without a path, and the number of such cases is reported as a count.
+5. A committed credential is never used, tested or validated.
+
+**Removal on request.** A repository owner can ask for their row to be removed from the published dataset. Published numbers keep their dataset hash. A later dataset version replaces the row's identifiers with `withheld`, and removals are reported as a count.
+
+**Clones.** Sampled repositories are cloned only into the local run cache (`.cache/corpus`). They are not redistributed, and the cache is deleted after results are published. Only ids, commits and derived counts are kept.
+
+This decision does not cover disclosures about MESA's own incident taxonomy (G12). That proposal is separate.
+
 ## Waivers
 
 A gate can be waived only by the human owner, @uddeshya-world. Agents cannot create waivers.
