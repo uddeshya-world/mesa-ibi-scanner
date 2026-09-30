@@ -15,6 +15,18 @@
 **Software DOI:** pending Zenodo-GitHub enable (do not invent; not minted yet)  
 Release: **v0.3.2** (toolization — topology `--input`, CI formats, exit codes)
 
+## Status: what is not measured yet
+
+This is a research prototype, written largely by AI agents under a test harness and pre-registered gates. Code and tests exist. **Evidence does not yet**:
+
+- **No false-positive rate.** The G7 comparison (boolean vs graded lattice) needs owner true/false-positive labels on real or public estates. None has been run.
+- **No base rate.** The G8/G9 corpus study is pre-registered and timestamped (`mesa-ibi-scanner/prereg/`), but the sample has not been drawn yet.
+- **No derivation accuracy.** The reference environments in mesa-ibi-derive are synthetic, with agent-drafted labels. They are development fixtures only. The G2 timed spike, a kill criterion for derivation, has not been run.
+- **Holdout results are not independent evidence.** The agent that wrote the code works with the owner's credentials, which can read `mesa-holdout`. The holdout corpus was written blind by a separate agent session, but no one should cite holdout passes until a human-written batch exists.
+- **Tests written by the implementing agent.** Several suites, including the mesa-pep tests that raised its mutation score from 0.415 to 1.0, were written by the same agent as the code. They await owner review.
+- The T8 mutation score (0.826, closure and frontier code) is measured on agent-written tests.
+- Property coverage by repository: `docs/PROPERTIES.md`.
+
 ## Invariant 1 (cut semantics)
 
 For every agent $b$, let $\mathrm{Cl}(b)$ be the join of property vectors over vertices with a directed path into $b$, **masked by edge flow type**. PDP-gated edges are **removed**; the gated set must form a **cut** such that closure over the **residual** graph is not $(1,1,1)$.
