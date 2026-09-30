@@ -38,9 +38,13 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           mkdir -p prev
-          run_id=$(gh run list -R "$GITHUB_REPOSITORY" -w scheduled -s success -L 20 --json databaseId,event \
-            --jq '[.[] | select(.event == "schedule" or .event == "workflow_dispatch")][0].databaseId // empty')
-          if [ -n "$run_id" ]; then gh run download "$run_id" -R "$GITHUB_REPOSITORY" -n t6-bench -D prev || true; fi
+          # The newest successful run may be a T8 run with no t6-bench artifact: take the newest that has one.
+          for run_id in $(gh run list -R "$GITHUB_REPOSITORY" -w scheduled -s success -L 30 --json databaseId --jq '.[].databaseId'); do
+            if gh run download "$run_id" -R "$GITHUB_REPOSITORY" -n t6-bench -D prev 2>/dev/null; then
+              echo "t6: previous result from run $run_id"
+              break
+            fi
+          done
       - name: B-01 and regression check
         run: |
           python benchmarks/b01_batch_closure.py | tee bench.json

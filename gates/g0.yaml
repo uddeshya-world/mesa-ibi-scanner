@@ -55,7 +55,11 @@ human_signoff:
       schemas/v0.1, computed every expected report by hand, and committed
       before running the scanner as a black box (0 mismatches). The
       implementing agent received only counts. First holdout run on main:
-      pass (27 Sep 2026).
+      pass (27 Sep 2026). Because agent sessions can read the holdout, these
+      passes are not independent evidence and are not cited anywhere. They
+      become citable after a batch written by a human, which no agent session
+      has read, is added, or a separate agent account without holdout access
+      is in place.
   - id: branch-protection-recorded
     owner: "@uddeshya-world"
     requirement: Branch protection on main requires code-owner review and the T0-T3, evidence and protected-paths checks.
