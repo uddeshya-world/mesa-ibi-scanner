@@ -67,7 +67,12 @@ Decided by the owner on 30 Sep 2026, before the sample is drawn. It is fixed tog
 
 1. Papers, the findings note, talks, posts and the README report **aggregates only**: BR-1 to BR-5 with intervals, exclusion and parse-failure counts, and negative cases by count and shape.
 2. No publication names, links, ranks or quotes a sampled repository as having a finding. Worked examples are rebuilt as synthetic topologies with identifiers changed. They are never excerpts of a sampled repository.
-3. The dataset keys result rows by pseudonymous ids (`env-NNNN`). Reproducibility inputs are published: the query, frame, seed and sampling code, plus `corpus/manifest.json`, which maps ids to public repositories at a commit. They are the output of a public search, and `make reproduce-baserate` needs them. The dataset README says that rows show capability in example and template code, not insecurity of a deployed system.
+3. **Amended 3 Oct 2026 by the owner, before the sample was drawn (option 3, mesa-ops #2).** No published artifact pairs a repository, or a sample position, with its result. The published dataset holds:
+   - the reproducibility inputs: the query, the frame, the seed and the sampling and runner code;
+   - the aggregates in point 1;
+   - one SHA-256 per included or excluded row, computed over the row's **complete** canonical record (repository, path, commit, inclusion decision and every derived field, witness paths included), listed in sorted hash order with no ids or fields beside it.
+
+   `corpus/manifest.json` and per-row results (`results.json`, `exclusions.md`) are owner-held and never committed to a public repository. A reproducer re-draws the sample from the frame and seed with `corpus/sample.py`, runs `make reproduce-baserate`, and checks that the dataset SHA-256 and the set of row hashes match. Hashing the full record means a row hash can only be matched by re-running derivation on that repository, not by guessing a verdict. This supersedes the sentence in `docs/BASERATE.md` section 8 about publishing the manifest; that file is left unchanged because its hash is pre-registered. The dataset README says that results show capability in example and template code, not insecurity of a deployed system.
 4. Rows for repositories whose licence forbids redistribution of derived data are published without paths (docs/BASERATE.md section 4).
 
 **No contact during the study.** Nobody working on MESA, human or agent, opens issues, pull requests, discussions or messages on a sampled repository, or contacts its owners, while sampling and analysis are under way. Contact could change the population being measured. Agents never contact third parties about the study at any time.
